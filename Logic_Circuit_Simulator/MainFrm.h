@@ -16,7 +16,7 @@ public:
 
 // 작업입니다.
 public:
-
+	CSplitterWnd m_wndSplitter;
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
@@ -40,6 +40,7 @@ protected:
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
 };
 
 

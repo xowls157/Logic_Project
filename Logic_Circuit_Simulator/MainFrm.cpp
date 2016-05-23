@@ -4,7 +4,10 @@
 
 #include "stdafx.h"
 #include "Logic_Circuit_Simulator.h"
-
+#include "Logic_Circuit_SimulatorDoc.h"
+#include "Logic_Circuit_SimulatorView.h"
+#include "LogicUnit.h"
+#include "unitLabel.h"
 #include "MainFrm.h"
 
 #ifdef _DEBUG
@@ -169,3 +172,23 @@ void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
 }
 
+
+
+BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
+{
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+
+	if (!m_wndSplitter.CreateStatic(this, 1, 2)) {
+		TRACE0("Fail to create splitter.\n");
+		return FALSE;
+	}
+
+
+	m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CLogic_Circuit_SimulatorView), CSize(300, 300), pContext);
+	m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CLogic_Circuit_SimulatorView), CSize(300, 300), pContext);
+	//SetActiveView((CView*)m_wndSplitter.GetPane(0, 0));
+
+	return TRUE;
+
+	return CFrameWnd::OnCreateClient(lpcs, pContext);
+}
