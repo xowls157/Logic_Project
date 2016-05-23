@@ -3,7 +3,7 @@
 #include "unitLabel.h"
 
 enum Direction { NORTH, SOUTH, EAST, WEST };
-enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, AndGate_type, OrGate_type };
+enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, AndGate_type, OrGate_type, NotGate_type, NandGate_type, NorGate_type };
 
 
 class LogicUnit
@@ -193,3 +193,59 @@ public:
 	}
 };
 
+//NOT °ÔÀÌÆ®
+class NotGate : public LogicUnit {
+
+public:
+	void notOp();
+
+public:
+	NotGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->setUnitType(NotGate_type);
+		this->setMaxInput(1);
+		this->setMaxOutput(1);
+		this->initInput(1);
+		this->initOutput(1);
+
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
+	}
+};
+
+class NANDGate : public LogicUnit
+{
+
+public:
+	void NandOp();
+
+public:
+	NANDGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->setUnitType(NandGate_type);
+		this->setMaxInput(2);
+		this->setMaxOutput(1);
+		this->initInput(2);
+		this->initOutput(1);
+
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
+	}
+};
+
+class NorGate : public LogicUnit
+{
+
+public:
+	void NorOp();
+
+public:
+	NorGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->setUnitType(NorGate_type);
+		this->setMaxInput(2);
+		this->setMaxOutput(1);
+		this->initInput(2);
+		this->initOutput(1);
+
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
+	}
+};

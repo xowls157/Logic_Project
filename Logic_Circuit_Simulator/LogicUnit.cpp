@@ -290,3 +290,67 @@ void OrGate::orOp() {
 	}
 
 }
+
+//not¿¬»ê
+void NotGate::notOp() 
+{
+
+	if (this->getCurrentInput() == this->getMaxInput()) 
+	{
+		if (this->getInput(0))
+		{
+			setOutput(0, false);
+		}
+		else 
+		{
+			setOutput(0, true);
+		}
+	}
+	else 
+	{
+		setOutput(0, false);
+	}
+
+}
+
+void NANDGate::NandOp()
+{
+
+	if (this->getCurrentInput() == this->getMaxInput())
+	{
+		if (this->getInput(0) && this->getInput(1))
+		{
+			setOutput(0, false);
+		}
+		else
+		{
+			setOutput(0, true);
+		}
+	}
+	else
+	{
+		setOutput(0, false);
+	}
+
+}
+
+void NorGate::NorOp()
+{
+
+	if (this->getCurrentInput() == this->getMaxInput())
+	{
+		if ((this->getInput(0) && this->getInput(1)) == 0)
+		{
+			setOutput(0, true);
+		}
+		else
+		{
+			setOutput(0, false);
+		}
+	}
+	else
+	{
+		setOutput(0, false);
+	}
+
+}

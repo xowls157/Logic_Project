@@ -93,6 +93,12 @@ IDB_OffOUTPUT           BITMAP                  "res\\bmp00003.bmp"
 
 IDB_OnOUTPUT            BITMAP                  "res\\bitmap3.bmp"
 
+IDB_NOTGATE             BITMAP                  "res\\bmp00004.bmp"
+
+IDB_NANDGATE            BITMAP                  "res\\bmp00005.bmp"
+
+IDB_NORGATE             BITMAP                  "res\\bmp00006.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -175,6 +181,9 @@ BEGIN
         MENUITEM "출력",                          ID_32772
         MENUITEM "AND게이트",                      ID_32773
         MENUITEM "OR게이트",                       ID_32774
+        MENUITEM "NOT게이트",                      ID_32775
+        MENUITEM "NAND게이트",                     ID_32776
+        MENUITEM "Nor게이트",                      ID_32777
     END
 END
 
