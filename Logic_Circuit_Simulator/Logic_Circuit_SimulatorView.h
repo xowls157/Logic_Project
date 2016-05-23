@@ -3,6 +3,7 @@
 //
 
 #pragma once
+#include "LogicUnit.h"
 
 
 class CLogic_Circuit_SimulatorView : public CView
@@ -17,6 +18,17 @@ public:
 
 // 작업입니다.
 public:
+	CArray<CRect, CRect&> boxes; // 박스 객체 리스트
+	CPtrList DrawList;
+	POSITION current;
+	bool move;
+	int startx;
+	int starty;
+
+
+	void CreatePoint(CDC* pDC);
+	void DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit);
+	bool CheckIn(CPoint pt);
 
 // 재정의입니다.
 public:
@@ -40,6 +52,14 @@ protected:
 // 생성된 메시지 맵 함수
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+	afx_msg void CreateInput();
+	afx_msg void CreateOutput();
+	afx_msg void CreateAND();
+	afx_msg void CreateOr();
 };
 
 #ifndef _DEBUG  // Logic_Circuit_SimulatorView.cpp의 디버그 버전

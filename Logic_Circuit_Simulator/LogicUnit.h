@@ -3,6 +3,7 @@
 #include "unitLabel.h"
 
 enum Direction { NORTH, SOUTH, EAST, WEST };
+enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, AndGate_type, OrGate_type };
 
 
 class LogicUnit
@@ -20,9 +21,13 @@ private:
 	int Maxoutput;			//출력해줄 신호들의 최대갯수
 	int currentoutput;		//입력받은 신호들의 현재갯수
 
+
+
+	Unit_type type;			//유닛 타입
 	Direction direction = EAST;	//방향
 
 public:
+	CPoint ImageSize;
 	unitLabel *label;		//라벨
 
 							//좌표 처리
@@ -63,6 +68,10 @@ public:
 	void setDirction(Direction dir);
 	Direction getDirction();
 
+	//타입
+	void setUnitType(Unit_type type);
+	bool isType(Unit_type type);
+
 	//각 유닛들 연결하기위한 함수
 	void static connect_Unit(LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number);
 	void static connect_line(LogicUnit *line, LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number);
@@ -93,10 +102,40 @@ public:
 
 public:
 	InputSwitch(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->setUnitType(InputSwitch_type);
 		this->setMaxInput(0);
 		this->setMaxOutput(1);
 		this->initInput(0);
 		this->initOutput(1);
+		this->ImageSize.x = 20;
+		this->ImageSize.y = 20;
+	}
+
+};
+
+//출력신호를 주는 유닛
+class OutputSwitch : public LogicUnit {
+public:
+	//호출시 기존값에서 변경함
+	bool updateOutput() {
+		this->setInput(0, (this->getInputList(0))->getOutput(0));
+
+		if (this->getInput(0))
+			return true;
+		else
+			return false;
+	}
+
+public:
+	OutputSwitch(CPoint init_Pt) :LogicUnit(init_Pt) {
+
+		this->setUnitType(OutputSwitch_type);
+		this->setMaxInput(1);
+		this->setMaxOutput(0);
+		this->initInput(1);
+		this->initOutput(0);
+		this->ImageSize.x = 20;
+		this->ImageSize.y = 20;
 	}
 
 };
@@ -106,6 +145,7 @@ class LineUnit : public LogicUnit {
 
 public:
 	LineUnit(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->setUnitType(LineUnit_type);
 		this->setMaxInput(1);
 		this->setMaxOutput(1);
 		this->initInput(1);
@@ -123,10 +163,14 @@ public:
 
 public:
 	AndGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->setUnitType(AndGate_type);
 		this->setMaxInput(2);
 		this->setMaxOutput(1);
 		this->initInput(2);
 		this->initOutput(1);
+
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
 	}
 };
 
@@ -138,10 +182,14 @@ public:
 
 public:
 	OrGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->setUnitType(OrGate_type);
 		this->setMaxInput(2);
 		this->setMaxOutput(1);
 		this->initInput(2);
 		this->initOutput(1);
+
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
 	}
 };
 

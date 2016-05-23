@@ -205,7 +205,20 @@ Direction LogicUnit::getDirction() {
 	return this->direction;
 }
 
+//유닛의 타입을 설정
+void LogicUnit::setUnitType(Unit_type type) {
+	this->type = type;
+}
 
+
+//유닛의 타입이 맞는지 확인
+bool LogicUnit::isType(Unit_type type) {
+	if (this->type == type)
+		return true;
+	else
+		return false;
+
+}
 
 //unit1을 unit2의 Input으로 연결
 void LogicUnit::connect_Unit(LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number) {
