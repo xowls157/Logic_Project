@@ -17,7 +17,7 @@
 #define new DEBUG_NEW
 #endif
 
-
+// 
 // CLogic_Circuit_SimulatorView
 
 IMPLEMENT_DYNCREATE(CLogic_Circuit_SimulatorView, CView)
