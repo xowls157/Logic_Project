@@ -102,4 +102,3 @@ CLogic_Circuit_SimulatorDoc* CLogic_Circuit_SimulatorView::GetDocument() const /
 
 
 // CLogic_Circuit_SimulatorView 메시지 처리기
-//test
