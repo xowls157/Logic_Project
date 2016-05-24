@@ -63,6 +63,8 @@ public:
 	afx_msg void CreateNot();
 	afx_msg void CreateNand();
 	afx_msg void CreateNor();
+	afx_msg void CreateXor();
+	afx_msg void CreateDFF();
 };
 
 #ifndef _DEBUG  // Logic_Circuit_SimulatorView.cpp의 디버그 버전

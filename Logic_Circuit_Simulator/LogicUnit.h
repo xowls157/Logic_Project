@@ -3,7 +3,8 @@
 #include "unitLabel.h"
 
 enum Direction { NORTH, SOUTH, EAST, WEST };
-enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, AndGate_type, OrGate_type, NotGate_type, NandGate_type, NorGate_type };
+enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, AndGate_type, OrGate_type, NotGate_type, NandGate_type, NorGate_type, XorGate_type,
+DFFGate_type};
 
 
 class LogicUnit
@@ -14,6 +15,7 @@ private:
 	CPoint pt;				//좌표
 	bool *input;			//입력받은 신호값
 	bool *output;			//출력할 신호값
+	bool *clock;			//clock 신호값
 	CPtrArray inputList;	//입력받은 객체들의 배열
 	CPtrArray outputList;	//출력해줄 객체들의 배열
 	int MaxInput;			//입력받은 신호들의 최대갯수
@@ -43,6 +45,10 @@ public:
 	void initOutput(int size);
 	void setOutput(int index, bool state);
 	bool getOutput(int index);
+
+	//clock값 처리											//미완성
+	void setclock(int index, bool state);
+	bool getclock(int index);
 
 	//Input 개체들 연결
 	void setInputList(LogicUnit *unit);
@@ -212,6 +218,7 @@ public:
 	}
 };
 
+//Nand 게이트
 class NANDGate : public LogicUnit
 {
 
@@ -231,6 +238,7 @@ public:
 	}
 };
 
+//Nor 게이트
 class NorGate : public LogicUnit
 {
 
@@ -244,6 +252,47 @@ public:
 		this->setMaxOutput(1);
 		this->initInput(2);
 		this->initOutput(1);
+
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
+	}
+};
+
+// Xor 게이트
+class XorGate : public LogicUnit
+{
+
+public:
+	void XorOp();
+
+public:
+	XorGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->setUnitType(XorGate_type);
+		this->setMaxInput(2);
+		this->setMaxOutput(1);
+		this->initInput(2);
+		this->initOutput(1);
+
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
+	}
+};
+
+//D플립플롭
+class DFFGate : public LogicUnit
+{
+
+public:
+	void DffOp();
+
+public:
+	DFFGate(CPoint init_Pt) :LogicUnit(init_Pt) 
+	{
+		this->setUnitType(DFFGate_type);
+		this->setMaxInput(1);
+		this->setMaxOutput(2);
+		this->initInput(1);
+		this->initOutput(2);
 
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;

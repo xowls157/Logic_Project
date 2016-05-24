@@ -117,5 +117,11 @@
     <Image Include="res\bmp00006.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="res\bmp00007.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\bmp00008.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

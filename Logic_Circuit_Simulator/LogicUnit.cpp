@@ -2,7 +2,6 @@
 #include "LogicUnit.h"
 #include <afxtempl.h>
 
-
 LogicUnit::LogicUnit()
 {
 }
@@ -89,6 +88,18 @@ void LogicUnit::setOutput(int index, bool state) {
 bool LogicUnit::getOutput(int index) {
 
 	return this->output[index];
+}
+//==============================================================
+
+//clock번호의 입력값을 바꿔줌(미완)				
+void LogicUnit::setclock(int index, bool state) {
+	this->clock[index] = state;
+}
+//==============================================================
+
+//clock값을 얻음(미완)
+bool LogicUnit::getclock(int index) {
+	return this->clock[index];
 }
 //==============================================================
 
@@ -313,6 +324,7 @@ void NotGate::notOp()
 
 }
 
+//nand 연산
 void NANDGate::NandOp()
 {
 
@@ -334,18 +346,92 @@ void NANDGate::NandOp()
 
 }
 
+//nor 연산
 void NorGate::NorOp()
 {
 
 	if (this->getCurrentInput() == this->getMaxInput())
 	{
-		if ((this->getInput(0) && this->getInput(1)) == 0)
+		if ((this->getInput(0) && this->getInput(1)) == false)
 		{
 			setOutput(0, true);
 		}
 		else
 		{
 			setOutput(0, false);
+		}
+	}
+	else
+	{
+		setOutput(0, false);
+	}
+
+}
+
+//xor 연산
+void XorGate::XorOp()
+{
+
+	if (this->getCurrentInput() == this->getMaxInput())
+	{
+		if ((this->getInput(0))) //참이면
+		{
+			if (this->getInput(1)) //참이면
+			{
+				setOutput(0, true);
+			}
+			else //거짓이면
+			{
+				setOutput(0, false);
+			}
+		}
+		else //거짓이면
+		{
+			if (this->getInput(1)) //참이면
+			{
+				setOutput(0, false);
+			}
+			else //거짓이면
+			{
+				setOutput(0, true);
+			}
+		}
+	}
+	else
+	{
+		setOutput(0, false);
+	}
+
+}
+
+//DFF연산
+void DFFGate::DffOp()
+{
+	SetTimer(0, 1000,0,0);
+
+	if (this->getCurrentInput() == this->getMaxInput())
+	{
+		if ((this->getInput(0))) //참이면
+		{
+			if (this->getInput(1)) //참이면
+			{
+				setOutput(0, true);
+			}
+			else //거짓이면
+			{
+				setOutput(0, false);
+			}
+		}
+		else //거짓이면
+		{
+			if (this->getInput(1)) //참이면
+			{
+				setOutput(0, false);
+			}
+			else //거짓이면
+			{
+				setOutput(0, true);
+			}
 		}
 	}
 	else

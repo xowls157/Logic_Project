@@ -99,6 +99,10 @@ IDB_NANDGATE            BITMAP                  "res\\bmp00005.bmp"
 
 IDB_NORGATE             BITMAP                  "res\\bmp00006.bmp"
 
+IDB_XORGATE             BITMAP                  "res\\bmp00007.bmp"
+
+IDB_BITMAP3             BITMAP                  "res\\bmp00008.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -184,6 +188,8 @@ BEGIN
         MENUITEM "NOT게이트",                      ID_32775
         MENUITEM "NAND게이트",                     ID_32776
         MENUITEM "Nor게이트",                      ID_32777
+        MENUITEM "XOR게이트",                      ID_32782
+        MENUITEM "D플립플롭",                       ID_32783
     END
 END
 

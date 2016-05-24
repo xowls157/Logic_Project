@@ -37,6 +37,9 @@ BEGIN_MESSAGE_MAP(CLogic_Circuit_SimulatorView, CView)
 	ON_COMMAND(ID_32775, &CLogic_Circuit_SimulatorView::CreateNot)
 	ON_COMMAND(ID_32776, &CLogic_Circuit_SimulatorView::CreateNand)
 	ON_COMMAND(ID_32777, &CLogic_Circuit_SimulatorView::CreateNor)
+	ON_COMMAND(ID_32782, &CLogic_Circuit_SimulatorView::CreateXor)
+	ON_COMMAND(ID_32783, &CLogic_Circuit_SimulatorView::CreateDFF)
+//	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 // CLogic_Circuit_SimulatorView 생성/소멸
@@ -311,6 +314,34 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		*/
 
 	}
+	else if (unit->isType(XorGate_type))
+	{
+
+		bit.LoadBitmapW(IDB_XORGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+		);
+
+		/*
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->LineTo(pt.x - 20, pt.y + 60);
+
+
+		pDC->MoveTo(pt.x + 60, pt.y + 40);
+		pDC->LineTo(pt.x + 80, pt.y + 40);
+		*/
+
+	}
 }
 
 bool CLogic_Circuit_SimulatorView::CheckIn(CPoint point) {
@@ -501,4 +532,22 @@ void CLogic_Circuit_SimulatorView::CreateNor()
 	DrawList.AddHead(in1);
 
 	Invalidate();
+}
+
+
+void CLogic_Circuit_SimulatorView::CreateXor()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+
+	XorGate *in1 = new XorGate(CPoint(10, 10));
+
+	DrawList.AddHead(in1);
+
+	Invalidate();
+}
+
+
+void CLogic_Circuit_SimulatorView::CreateDFF()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 }
