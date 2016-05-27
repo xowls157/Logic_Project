@@ -4,7 +4,7 @@
 
 #pragma once
 #include "LogicUnit.h"
-
+#include "Logic_Circuit_SimulatorDoc.h"
 
 class CLogic_Circuit_SimulatorView : public CView
 {
@@ -28,7 +28,7 @@ public:
 	LogicUnit *temp1;
 	LogicUnit *temp2;
 	POSITION temp_pos;
-	
+
 	void CreatePoint(CDC* pDC);
 	void DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit);
 	bool CheckIn(CPoint pt);
@@ -71,6 +71,11 @@ public:
 	afx_msg void CreateOutput();
 	afx_msg void CreateAND();
 	afx_msg void CreateOr();
+	afx_msg void CreateNot();
+	afx_msg void CreateNand();
+	afx_msg void CreateNor();
+	afx_msg void CreateXor();
+	afx_msg void CreateDFF();
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
