@@ -12,6 +12,7 @@ class LogicUnit
 	//멤버변수들
 private:
 	CPoint pt;				//좌표
+
 	bool *input;			//입력받은 신호값
 	bool *output;			//출력할 신호값
 	CPtrArray inputList;	//입력받은 객체들의 배열
@@ -27,13 +28,18 @@ private:
 	Direction direction = EAST;	//방향
 
 public:
+	CPoint *input_pt;		//입출력 좌표
+	CPoint *output_pt;		//입출력 좌표
 	CPoint ImageSize;
 	unitLabel *label;		//라벨
 
+
+	int get_putIndex(CPoint pt, bool &result);
+	bool is_input(CPoint pt);
 							//좌표 처리
 	void setPoint(CPoint setPt);
+	virtual void setPut_point(CPoint pt);
 	CPoint getPoint();
-
 	//Input값 처리
 	void initInput(int size);
 	void setInput(int index, bool state);
@@ -99,6 +105,11 @@ public:
 			this->setOutput(0, false);
 		}
 	}
+	void setPut_point(CPoint pt) {
+		this->input_pt = NULL;
+		this->output_pt = new CPoint[1];
+		this->output_pt[0].SetPoint(pt.x+60, pt.y+ 20);
+	}
 
 public:
 	InputSwitch(CPoint init_Pt) :LogicUnit(init_Pt) {
@@ -107,10 +118,10 @@ public:
 		this->setMaxOutput(1);
 		this->initInput(0);
 		this->initOutput(1);
-		this->ImageSize.x = 20;
-		this->ImageSize.y = 20;
+		this->ImageSize.x = 40;
+		this->ImageSize.y = 40;
+		setPut_point(init_Pt);
 	}
-
 };
 
 //출력신호를 주는 유닛
@@ -125,35 +136,47 @@ public:
 		else
 			return false;
 	}
-
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[1];
+		this->output_pt = NULL;
+		this->input_pt[0].SetPoint(pt.x-20, pt.y+20);
+	}
 public:
 	OutputSwitch(CPoint init_Pt) :LogicUnit(init_Pt) {
-
 		this->setUnitType(OutputSwitch_type);
 		this->setMaxInput(1);
 		this->setMaxOutput(0);
 		this->initInput(1);
 		this->initOutput(0);
-		this->ImageSize.x = 20;
-		this->ImageSize.y = 20;
+		this->ImageSize.x = 40;
+		this->ImageSize.y = 40;
+		setPut_point(init_Pt);
 	}
 
 };
 
 //유닛들을 연결하는 라인
 class LineUnit : public LogicUnit {
+private:
+	void setEndPoint(CPoint end_pt) {
+		endPoint = end_pt;
+	}
 
 public:
-	LineUnit(CPoint init_Pt) :LogicUnit(init_Pt) {
+	CPoint endPoint;
+	LineUnit(CPoint init_Pt, CPoint end_pt) :LogicUnit(init_Pt),endPoint(end_pt) {
 		this->setUnitType(LineUnit_type);
 		this->setMaxInput(1);
 		this->setMaxOutput(1);
 		this->initInput(1);
 		this->initOutput(1);
+
+		this->input_pt = new CPoint[1];
+		this->output_pt = new CPoint[1];
+		this->input_pt[0].SetPoint(init_Pt.x, init_Pt.y);
+		this->output_pt[0].SetPoint(end_pt.x, end_pt.y);
 	}
 };
-
-
 
 //AND 게이트
 class AndGate : public LogicUnit {
@@ -161,6 +184,14 @@ class AndGate : public LogicUnit {
 public:
 	void andOp();
 
+	void setPut_point(CPoint pt) {
+
+		this->input_pt = new CPoint[2];
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
+		this->output_pt = new CPoint[1];
+		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+	}
 public:
 	AndGate(CPoint init_Pt) :LogicUnit(init_Pt) {
 		this->setUnitType(AndGate_type);
@@ -171,6 +202,7 @@ public:
 
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+		setPut_point(init_Pt);
 	}
 };
 
@@ -179,6 +211,13 @@ class OrGate : public LogicUnit {
 
 public:
 	void orOp();
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[2];
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
+		this->output_pt = new CPoint[1];
+		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+	}
 
 public:
 	OrGate(CPoint init_Pt) :LogicUnit(init_Pt) {
@@ -190,6 +229,7 @@ public:
 
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+		setPut_point(init_Pt);
 	}
 };
 

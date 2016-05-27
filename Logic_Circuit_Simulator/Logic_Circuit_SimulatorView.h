@@ -18,17 +18,28 @@ public:
 
 // 작업입니다.
 public:
-	CArray<CRect, CRect&> boxes; // 박스 객체 리스트
 	CPtrList DrawList;
+	CPtrList LineList;
 	POSITION current;
 	bool move;
 	int startx;
 	int starty;
 
-
+	LogicUnit *temp1;
+	LogicUnit *temp2;
+	POSITION temp_pos;
+	
 	void CreatePoint(CDC* pDC);
 	void DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit);
 	bool CheckIn(CPoint pt);
+	CPoint Nearby_point(CPoint pt);
+
+
+	int search_unit(CPoint pt,bool &isInput);
+	LogicUnit *selected_Input;
+	LogicUnit *selected_Output;
+	int selected_Input_Index;
+	int selected_Output_Index;
 
 // 재정의입니다.
 public:
@@ -60,6 +71,8 @@ public:
 	afx_msg void CreateOutput();
 	afx_msg void CreateAND();
 	afx_msg void CreateOr();
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
 };
 
 #ifndef _DEBUG  // Logic_Circuit_SimulatorView.cpp의 디버그 버전

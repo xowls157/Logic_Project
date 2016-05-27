@@ -30,6 +30,9 @@ CPoint LogicUnit::getPoint() {
 
 	return pt;
 }
+void LogicUnit::setPut_point(CPoint pt) {
+	;
+}
 //==============================================================
 
 //Input값을 size수 만큼 초기화 시킴
@@ -210,15 +213,45 @@ void LogicUnit::setUnitType(Unit_type type) {
 	this->type = type;
 }
 
-
 //유닛의 타입이 맞는지 확인
 bool LogicUnit::isType(Unit_type type) {
 	if (this->type == type)
 		return true;
 	else
 		return false;
-
 }
+
+//입력받은 좌표가 몇번째 입력 혹은 출력인지 확인
+int LogicUnit::get_putIndex(CPoint pt,bool &result) {
+	result = false;
+	for (int i = 0; i != this->getMaxInput(); i++) {
+		if (pt == this->input_pt[i]) {
+			result = true;
+			return i;
+		}
+	}
+
+	for (int i = 0; i != this->getMaxOutput(); i++) {
+		if (pt == this->output_pt[i])
+			return i;
+	}
+	return -1;
+}
+
+//입력받은 좌표가 입력인지 확인
+bool LogicUnit::is_input(CPoint pt) {
+
+	for (int i = 0; i != this->getMaxInput(); i++) {
+		if (pt == this->input_pt[i])
+			return true;
+	}
+	for (int i = 0; i != this->getMaxOutput(); i++) {
+		if (pt == this->output_pt[i])
+			return false;
+	}
+	return false;
+}
+
 
 //unit1을 unit2의 Input으로 연결
 void LogicUnit::connect_Unit(LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number) {
@@ -257,8 +290,6 @@ void LogicUnit::disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_numbe
 
 //AND 연산
 void AndGate::andOp() {
-	bool result;
-
 	if (this->getCurrentInput() == this->getMaxInput()) {
 		if (this->getInput(0) && this->getInput(1)) {
 			setOutput(0, true);
@@ -270,8 +301,6 @@ void AndGate::andOp() {
 	else {
 		setOutput(0, false);
 	}
-
-
 }
 
 //or연산
