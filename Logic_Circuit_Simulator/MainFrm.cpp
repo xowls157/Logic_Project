@@ -8,6 +8,7 @@
 #include "Logic_Circuit_SimulatorView.h"
 #include "LogicUnit.h"
 #include "unitLabel.h"
+#include "MyTreeView.h"
 #include "MainFrm.h"
 
 #ifdef _DEBUG
@@ -184,7 +185,7 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	}
 
 
-	m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CLogic_Circuit_SimulatorView), CSize(300, 300), pContext);
+	m_wndSplitter.CreateView(0, 0, RUNTIME_CLASS(CMyTreeView), CSize(300, 300), pContext);
 	m_wndSplitter.CreateView(0, 1, RUNTIME_CLASS(CLogic_Circuit_SimulatorView), CSize(300, 300), pContext);
 	//SetActiveView((CView*)m_wndSplitter.GetPane(0, 0));
 

@@ -103,6 +103,10 @@ IDB_XORGATE             BITMAP                  "res\\bmp00007.bmp"
 
 IDB_BITMAP3             BITMAP                  "res\\bmp00008.bmp"
 
+IDB_BITMAP4             BITMAP                  "C:\\Users\\¹Ú¹Ì·¡\\Documents\\Visual Studio 2015\\Projects\\Logic_Project\\Logic_Circuit_Simulator\\res\\bitmap5.bmp"
+
+IDB_BITMAP5             BITMAP                  "res\\bmp00009.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

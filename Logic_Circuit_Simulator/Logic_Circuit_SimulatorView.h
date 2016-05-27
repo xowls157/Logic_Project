@@ -4,7 +4,7 @@
 
 #pragma once
 #include "LogicUnit.h"
-
+#include "Logic_Circuit_SimulatorDoc.h"
 
 class CLogic_Circuit_SimulatorView : public CView
 {
