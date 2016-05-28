@@ -11,6 +11,7 @@
 
 #include "Logic_Circuit_SimulatorDoc.h"
 #include "Logic_Circuit_SimulatorView.h"
+#include "MainFrm.h"
 #include "resource.h"
 
 #ifdef _DEBUG
@@ -49,6 +50,7 @@ END_MESSAGE_MAP()
 CLogic_Circuit_SimulatorView::CLogic_Circuit_SimulatorView()
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
+	
 
 }
 
@@ -60,7 +62,7 @@ BOOL CLogic_Circuit_SimulatorView::PreCreateWindow(CREATESTRUCT& cs)
 {
 	// TODO: CREATESTRUCT cs를 수정하여 여기에서
 	//  Window 클래스 또는 스타일을 수정합니다.
-
+	
 	move = false;
 	selected_Input = NULL;
 	selected_Output = NULL;
@@ -81,7 +83,7 @@ void CLogic_Circuit_SimulatorView::OnDraw(CDC* pDC)
 		return;
 
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
-
+	
 	CFont font;
 	CBitmap bit;
 	CPoint point(10, 10);
