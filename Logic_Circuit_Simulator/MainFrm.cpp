@@ -1,4 +1,4 @@
-
+	
 // MainFrm.cpp : CMainFrame 클래스의 구현
 //
 
@@ -68,6 +68,14 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	EnableDocking(CBRS_ALIGN_ANY);
 	DockControlBar(&m_wndToolBar);
 
+	// 메뉴 개인 설정을 활성화합니다(가장 최근에 사용한 명령).
+	CList<UINT, UINT> lstBasicCommands;
+
+	lstBasicCommands.AddTail(ID_FILE_NEW);
+	lstBasicCommands.AddTail(ID_FILE_OPEN);
+	lstBasicCommands.AddTail(ID_FILE_SAVE);
+
+	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 	return 0;
 }
