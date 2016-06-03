@@ -34,6 +34,7 @@ public:
 	bool linning;		//라인을 그릴 수 있는 상태
 	CPoint line_start_pt;	//라인을 그리는 시작점
 
+	CPoint mPoint;
 	int startx;			//라인을 다시그리는 시작점	(마우스무브에서 사용)
 	int starty;			
 	int prevx;			//이전에 라인을 그렸던 끝점 (마우스무브에서 사용)
@@ -91,6 +92,8 @@ public:
 	afx_msg void CreateDFF();
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
+	afx_msg void OnContextMenu(CWnd* /*pWnd*/, CPoint /*point*/);
+	afx_msg void OnLabel();
 };
 
 #ifndef _DEBUG  // Logic_Circuit_SimulatorView.cpp의 디버그 버전

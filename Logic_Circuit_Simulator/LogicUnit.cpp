@@ -304,6 +304,10 @@ void LogicUnit::disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_numbe
 	delete line;
 }
 
+void LogicUnit::onLabelName(CClientDC &dc) {
+	dc.TextOutW(label.pt.x, label.pt.y, label.UnitName);
+}
+
 //AND ¿¬»ê
 void AndGate::Op() {
 	if (this->getCurrentInput() == this->getMaxInput()) {

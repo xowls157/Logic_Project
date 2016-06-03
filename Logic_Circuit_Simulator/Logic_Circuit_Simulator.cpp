@@ -126,6 +126,8 @@ protected:
 // 구현입니다.
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnLabel();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(IDD_ABOUTBOX)
@@ -138,6 +140,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+	ON_COMMAND(ID_32784, &CAboutDlg::OnLabel)
 END_MESSAGE_MAP()
 
 // 대화 상자를 실행하기 위한 응용 프로그램 명령입니다.
@@ -149,5 +152,9 @@ void CLogic_Circuit_SimulatorApp::OnAppAbout()
 
 // CLogic_Circuit_SimulatorApp 메시지 처리기
 
+void CAboutDlg::OnLabel()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 
 
+}

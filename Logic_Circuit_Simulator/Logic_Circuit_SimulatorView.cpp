@@ -42,6 +42,8 @@ BEGIN_MESSAGE_MAP(CLogic_Circuit_SimulatorView, CView)
 	ON_COMMAND(ID_32783, &CLogic_Circuit_SimulatorView::CreateDFF)
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_TIMER()
+	ON_WM_CONTEXTMENU()
+	ON_COMMAND(ID_32784, &CLogic_Circuit_SimulatorView::OnLabel)
 END_MESSAGE_MAP()
 
 // CLogic_Circuit_SimulatorView 생성/소멸
@@ -282,11 +284,8 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 
 		pDC->MoveTo(pt.x, pt.y + 20);
 		pDC->LineTo(pt.x - 20, pt.y + 20);
-
 		pDC->MoveTo(pt.x, pt.y + 60);
 		pDC->LineTo(pt.x - 20, pt.y + 60);
-
-
 		pDC->MoveTo(pt.x + 60, pt.y + 40);
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 
@@ -307,11 +306,8 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 
 		pDC->MoveTo(pt.x, pt.y + 20);
 		pDC->LineTo(pt.x - 20, pt.y + 20);
-
 		pDC->MoveTo(pt.x, pt.y + 60);
 		pDC->LineTo(pt.x - 20, pt.y + 60);
-
-
 		pDC->MoveTo(pt.x + 60, pt.y + 40);
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 
@@ -357,14 +353,13 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 
 		pDC->MoveTo(pt.x, pt.y + 20);
 		pDC->LineTo(pt.x - 20, pt.y + 20);
-
 		pDC->MoveTo(pt.x, pt.y + 60);
 		pDC->LineTo(pt.x - 20, pt.y + 60);
-
-
 		pDC->MoveTo(pt.x + 60, pt.y + 40);
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 	}
+
+
 }
 
 bool CLogic_Circuit_SimulatorView::CheckIn(CPoint point) {
@@ -642,6 +637,7 @@ void CLogic_Circuit_SimulatorView::OnMouseMove(UINT nFlags, CPoint point)
 
 	CView::OnMouseMove(nFlags, point);
 	CClientDC dc(this);
+	mPoint.SetPoint(point.x, point.y);
 
 	if (nFlags & MK_LBUTTON == 1 && current != NULL && linning != true) {
 		//유닛 이동부분
@@ -663,6 +659,7 @@ void CLogic_Circuit_SimulatorView::OnMouseMove(UINT nFlags, CPoint point)
 
 			temp->setPoint(pt);
 			temp->setPut_point(pt);
+			temp->label.pt.SetPoint(pt.x, pt.y - 40);
 
 			Invalidate();
 		}
@@ -827,4 +824,30 @@ void CLogic_Circuit_SimulatorView::OnTimer(UINT_PTR nIDEvent)
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
 	CView::OnTimer(nIDEvent);
+}
+
+
+void CLogic_Circuit_SimulatorView::OnContextMenu(CWnd* pWnd, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
+
+	CMenu menu;
+	menu.LoadMenu(IDR_MENU1);
+
+	if (CheckIn(this->mPoint) == true){
+		CMenu *pMenu = menu.GetSubMenu(0);
+		pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, AfxGetMainWnd());
+	}
+
+}
+
+
+void CLogic_Circuit_SimulatorView::OnLabel()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	CClientDC dc(this);
+	LogicUnit *temp;
+	temp = (LogicUnit *)DrawList.GetNext(current);
+
+	temp->onLabelName(dc);
 }

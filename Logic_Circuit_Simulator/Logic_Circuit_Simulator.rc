@@ -192,6 +192,14 @@ BEGIN
     MENUITEM "Windows 7(&D)",               ID_VIEW_APPLOOK_WINDOWS_7
 END
 
+IDR_MENU1 MENU
+BEGIN
+    POPUP "메뉴"
+    BEGIN
+        MENUITEM "라벨 붙이기",                      ID_32784
+    END
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

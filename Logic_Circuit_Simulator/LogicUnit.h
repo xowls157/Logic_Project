@@ -33,7 +33,7 @@ public:
 	CPoint *input_pt;		//입출력 좌표
 	CPoint *output_pt;		//입출력 좌표
 	CPoint ImageSize;
-	unitLabel *label;		//라벨
+	unitLabel label;		//라벨
 
 
 	int get_putIndex(CPoint pt, bool &result);
@@ -98,6 +98,10 @@ public:
 	void static disconnect_Unit(LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number);
 	void static disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number);
 
+	void onLabelName(CClientDC &dc);
+
+ 
+
 public:
 	LogicUnit();
 	LogicUnit(CPoint init_Pt);
@@ -125,6 +129,8 @@ public:
 
 public:
 	InputSwitch(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("input"));
 		this->setUnitType(InputSwitch_type);
 		this->setMaxInput(0);
 		this->setMaxOutput(1);
@@ -158,6 +164,8 @@ public:
 	}
 public:
 	OutputSwitch(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("output"));
 		this->setUnitType(OutputSwitch_type);
 		this->setMaxInput(1);
 		this->setMaxOutput(0);
@@ -207,6 +215,8 @@ public:
 	}
 public:
 	AndGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("AndGate"));
 		this->setUnitType(AndGate_type);
 		this->setMaxInput(2);
 		this->setMaxOutput(1);
@@ -233,6 +243,8 @@ public:
 
 public:
 	OrGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("OrGate"));
 		this->setUnitType(OrGate_type);
 		this->setMaxInput(2);
 		this->setMaxOutput(1);
@@ -258,6 +270,8 @@ public:
 	}
 public:
 	NotGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("NotGate"));
 		this->setUnitType(NotGate_type);
 		this->setMaxInput(1);
 		this->setMaxOutput(1);
@@ -283,6 +297,8 @@ public:
 	}
 public:
 	NANDGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("NandGate"));
 		this->setUnitType(NandGate_type);
 		this->setMaxInput(2);
 		this->setMaxOutput(1);
@@ -309,6 +325,8 @@ public:
 	}
 public:
 	NorGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("NorGate"));
 		this->setUnitType(NorGate_type);
 		this->setMaxInput(2);
 		this->setMaxOutput(1);
@@ -335,6 +353,8 @@ public:
 	}
 public:
 	XorGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("XorGate"));
 		this->setUnitType(XorGate_type);
 		this->setMaxInput(2);
 		this->setMaxOutput(1);
@@ -354,8 +374,9 @@ public:
 	void Op();
 
 public:
-	DFFGate(CPoint init_Pt) :LogicUnit(init_Pt) 
-	{
+	DFFGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("D-FF"));
 		this->setUnitType(DFFGate_type);
 		this->setMaxInput(1);
 		this->setMaxOutput(2);
