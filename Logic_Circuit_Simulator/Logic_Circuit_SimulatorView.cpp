@@ -11,6 +11,7 @@
 
 #include "Logic_Circuit_SimulatorDoc.h"
 #include "Logic_Circuit_SimulatorView.h"
+#include "MainFrm.h"
 #include "resource.h"
 
 #ifdef _DEBUG
@@ -49,6 +50,7 @@ CLogic_Circuit_SimulatorView::CLogic_Circuit_SimulatorView()
 {
 	// TODO: 여기에 생성 코드를 추가합니다.
 
+
 }
 
 CLogic_Circuit_SimulatorView::~CLogic_Circuit_SimulatorView()
@@ -66,7 +68,7 @@ BOOL CLogic_Circuit_SimulatorView::PreCreateWindow(CREATESTRUCT& cs)
 	selected_Input_Index = -1;
 	selected_Output_Index = -1;
 	prevx = prevy = -1;
-	
+
 	return CView::PreCreateWindow(cs);
 }
 
@@ -329,10 +331,37 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
 			);
 
-		pDC->MoveTo(pt.x + 8, pt.y + 20);
+		
+		pDC->MoveTo(pt.x, pt.y + 20);
 		pDC->LineTo(pt.x - 20, pt.y + 20);
 		pDC->MoveTo(pt.x + 8, pt.y + 60);
 		pDC->LineTo(pt.x - 20, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 40);
+		pDC->LineTo(pt.x + 80, pt.y + 40);
+	}
+	else if (unit->isType(XorGate_type))
+	{
+
+		bit.LoadBitmapW(IDB_XORGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->LineTo(pt.x - 20, pt.y + 60);
+
+
 		pDC->MoveTo(pt.x + 60, pt.y + 40);
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 	}
@@ -559,13 +588,13 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point)
 
 				line = new LineUnit(line_start_pt, Nearby_point(point));
 			}
-			LineList.AddHead(line);
+				LineList.AddHead(line);
 
-			selected_Input = NULL;
-			selected_Output = NULL;
+				selected_Input = NULL;
+				selected_Output = NULL;
 
 			linning = false;
-		}
+}
 		else {
 			linning = true;
 			line_start_pt = Nearby_point(point);
@@ -601,7 +630,7 @@ void CLogic_Circuit_SimulatorView::OnLButtonUp(UINT nFlags, CPoint point)
 		//인풋 아웃풋 좌표 확인
 	}
 	move = false;
-	
+
 	Invalidate();
 	
 	CView::OnLButtonUp(nFlags, point);

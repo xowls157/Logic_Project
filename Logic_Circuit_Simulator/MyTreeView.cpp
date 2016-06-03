@@ -5,6 +5,7 @@
 #include "Logic_Circuit_Simulator.h"
 #include "Logic_Circuit_SimulatorView.h"
 #include "LogicUnit.h"
+#include "MainFrm.h"
 #include "MyTreeView.h"
 
 
@@ -82,7 +83,7 @@ void CMyTreeView::OnInitialUpdate()
 	tree.InsertItem(_T("입력"), 1, 1, hGate[2], TVI_LAST);
 	tree.InsertItem(_T("출력"), 1, 1, hGate[2], TVI_LAST);
 
-}
+	}
 
 
 BOOL CMyTreeView::PreCreateWindow(CREATESTRUCT& cs)
@@ -146,15 +147,15 @@ void CMyTreeView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		view->Invalidate();
 	}
 	else if (item_name == _T("D-FF")) {
-		
+
 
 	}
 	else if (item_name == _T("JK-FF")) {
-		
+
 
 	}
 	else if (item_name == _T("T-FF")) {
-		
+
 
 	}
 	else if (item_name == _T("입력")) {
