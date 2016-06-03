@@ -181,18 +181,6 @@ BEGIN
     BEGIN
         MENUITEM "Logic_Circuit_Simulator 정보(&A)...", ID_APP_ABOUT
     END
-    POPUP "추가하기"
-    BEGIN
-        MENUITEM "입력",                          ID_32771
-        MENUITEM "출력",                          ID_32772
-        MENUITEM "AND게이트",                      ID_32773
-        MENUITEM "OR게이트",                       ID_32774
-        MENUITEM "NOT게이트",                      ID_32775
-        MENUITEM "NAND게이트",                     ID_32776
-        MENUITEM "Nor게이트",                      ID_32777
-        MENUITEM "XOR게이트",                      ID_32782
-        MENUITEM "D플립플롭",                       ID_32783
-    END
 END
 
 IDR_THEME_MENU MENU
