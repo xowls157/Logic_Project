@@ -98,7 +98,7 @@ public:
 	void static disconnect_Unit(LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number);
 	void static disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number);
 
-	void onLabelName(CClientDC &dc);
+	void onLabelName(CDC *dc);
 
  
 
