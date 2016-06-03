@@ -179,7 +179,6 @@ void CLogic_Circuit_SimulatorView::CreatePoint(CDC* pDC) {
 
 //리스트에 담긴 객체를 전달받아 타입에따라 그려주기
 void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit) {
-	CClientDC dc(this);
 	CRect rect;
 	CBitmap bit;
 	BITMAP bminfo;
@@ -312,9 +311,7 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 
 	}
-	else if (unit->isType(NorGate_type))
-	{
-
+	else if (unit->isType(NorGate_type)){
 		bit.LoadBitmapW(IDB_NORGATE);
 		bit.GetBitmap(&bminfo);
 		memDC.SelectObject(&bit);
@@ -335,9 +332,7 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->MoveTo(pt.x + 60, pt.y + 40);
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 	}
-	else if (unit->isType(XorGate_type))
-	{
-
+	else if (unit->isType(XorGate_type)){
 		bit.LoadBitmapW(IDB_XORGATE);
 		bit.GetBitmap(&bminfo);
 		memDC.SelectObject(&bit);
@@ -359,6 +354,9 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 	}
 
+	if ((unit->label.state)) {
+		unit->onLabelName(pDC);
+	}
 
 }
 
@@ -477,8 +475,6 @@ void CLogic_Circuit_SimulatorView::newUpdate(LogicUnit *unit) {
 
 void CLogic_Circuit_SimulatorView::Update(LogicUnit *unit) {
 	unit->Op();
-
-
 }
 
 //현재 클릭지점(point)가 어떤 게이트의 몇번째 입력지점인지 리턴해주고 isInput에 입력이면 true, 출력지점이면 false 
@@ -507,8 +503,7 @@ int CLogic_Circuit_SimulatorView::search_unit(CPoint point, bool &isInput) {
 	return -1;
 }
 
-void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point)
-{
+void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	CClientDC dc(this);
 	LogicUnit* temp;
@@ -603,8 +598,7 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point)
 	CView::OnLButtonDown(nFlags, point);
 }
 
-void CLogic_Circuit_SimulatorView::OnLButtonUp(UINT nFlags, CPoint point)
-{
+void CLogic_Circuit_SimulatorView::OnLButtonUp(UINT nFlags, CPoint point){
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	CClientDC dc(this);
 	LogicUnit *temp;
@@ -631,8 +625,7 @@ void CLogic_Circuit_SimulatorView::OnLButtonUp(UINT nFlags, CPoint point)
 	CView::OnLButtonUp(nFlags, point);
 }
 
-void CLogic_Circuit_SimulatorView::OnMouseMove(UINT nFlags, CPoint point)
-{
+void CLogic_Circuit_SimulatorView::OnMouseMove(UINT nFlags, CPoint point){
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 
 	CView::OnMouseMove(nFlags, point);
@@ -845,9 +838,11 @@ void CLogic_Circuit_SimulatorView::OnContextMenu(CWnd* pWnd, CPoint point)
 void CLogic_Circuit_SimulatorView::OnLabel()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
-	CClientDC dc(this);
+	CClientDC *dc = new CClientDC(this);
+	
 	LogicUnit *temp;
 	temp = (LogicUnit *)DrawList.GetNext(current);
 
 	temp->onLabelName(dc);
+	temp->label.state = true;
 }

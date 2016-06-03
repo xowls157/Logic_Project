@@ -14,6 +14,7 @@ LogicUnit::LogicUnit(CPoint init_pt)
 	this->MaxInput = 0;
 	this->Maxoutput = 0;
 	this->direction = EAST;
+	this->label.state = false;
 }
 
 LogicUnit::~LogicUnit()
@@ -304,8 +305,8 @@ void LogicUnit::disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_numbe
 	delete line;
 }
 
-void LogicUnit::onLabelName(CClientDC &dc) {
-	dc.TextOutW(label.pt.x, label.pt.y, label.UnitName);
+void LogicUnit::onLabelName(CDC *dc) {
+	dc->TextOutW(label.pt.x, label.pt.y, label.UnitName);
 }
 
 //AND ¿¬»ê

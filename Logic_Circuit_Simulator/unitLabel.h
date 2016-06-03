@@ -4,6 +4,7 @@ class unitLabel
 public:
 	CString UnitName;
 	CPoint pt;
+	bool state;
 
 public:
 	unitLabel();
