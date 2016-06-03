@@ -20,6 +20,11 @@ LogicUnit::~LogicUnit()
 {
 }
 
+void LogicUnit::Op() {
+
+
+}
+
 
 //좌표를 입력 받음
 void LogicUnit::setPoint(CPoint setPt) {
@@ -300,7 +305,7 @@ void LogicUnit::disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_numbe
 }
 
 //AND 연산
-void AndGate::andOp() {
+void AndGate::Op() {
 	if (this->getCurrentInput() == this->getMaxInput()) {
 		if (this->getInput(0) && this->getInput(1)) {
 			setOutput(0, true);
@@ -315,7 +320,7 @@ void AndGate::andOp() {
 }
 
 //or연산
-void OrGate::orOp() {
+void OrGate::Op() {
 
 	if (this->getCurrentInput() == this->getMaxInput()) {
 		if (this->getInput(0) || this->getInput(1)) {
@@ -332,7 +337,7 @@ void OrGate::orOp() {
 }
 
 //not연산
-void NotGate::notOp() 
+void NotGate::Op() 
 {
 
 	if (this->getCurrentInput() == this->getMaxInput()) 
@@ -354,7 +359,7 @@ void NotGate::notOp()
 }
 
 //nand 연산
-void NANDGate::NandOp()
+void NANDGate::Op()
 {
 
 	if (this->getCurrentInput() == this->getMaxInput())
@@ -376,7 +381,7 @@ void NANDGate::NandOp()
 }
 
 //nor 연산
-void NorGate::NorOp()
+void NorGate::Op()
 {
 
 	if (this->getCurrentInput() == this->getMaxInput())
@@ -398,7 +403,7 @@ void NorGate::NorOp()
 }
 
 //xor 연산
-void XorGate::XorOp()
+void XorGate::Op()
 {
 
 	if (this->getCurrentInput() == this->getMaxInput())
@@ -434,7 +439,7 @@ void XorGate::XorOp()
 }
 
 //DFF연산
-void DFFGate::DffOp()
+void DFFGate::Op()
 {
 	SetTimer(0, 1000,0,0);
 

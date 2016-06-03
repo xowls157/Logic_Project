@@ -6,6 +6,11 @@
 #include "LogicUnit.h"
 #include "Logic_Circuit_SimulatorDoc.h"
 
+struct unitStack {
+	LogicUnit *unit;
+	bool prev;
+};
+
 class CLogic_Circuit_SimulatorView : public CView
 {
 protected: // serialization에서만 만들어집니다.
@@ -18,28 +23,36 @@ public:
 
 // 작업입니다.
 public:
-	CPtrList DrawList;
-	CPtrList LineList;
-	POSITION current;
-	bool move;
-	int startx;
-	int starty;
+	CPtrList DrawList;	//생성된 게이트들을 저장할 리스트
+	CPtrList LineList;	//생성된 라인들을 저장할 리스트
+	
+	unitStack *stack;	//출력들을 update할 때 저장할 스택
+	int stack_count;	//위 스택의 카운트
+	
+	POSITION current;	//현재 선택된 게이트의 position
+	bool move;			//현재 선택된 게이트의 이동 가능 상태
+	bool linning;		//라인을 그릴 수 있는 상태
+	CPoint line_start_pt;	//라인을 그리는 시작점
 
-	LogicUnit *temp1;
-	LogicUnit *temp2;
-	POSITION temp_pos;
+	int startx;			//라인을 다시그리는 시작점	(마우스무브에서 사용)
+	int starty;			
+	int prevx;			//이전에 라인을 그렸던 끝점 (마우스무브에서 사용)
+	int prevy;
 
-	void CreatePoint(CDC* pDC);
-	void DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit);
-	bool CheckIn(CPoint pt);
-	CPoint Nearby_point(CPoint pt);
-
-
-	int search_unit(CPoint pt,bool &isInput);
+	//게이트 간 연결시 임시로 저장해주는 변수
 	LogicUnit *selected_Input;
 	LogicUnit *selected_Output;
 	int selected_Input_Index;
 	int selected_Output_Index;
+
+	//작업 메소드들
+	void CreatePoint(CDC* pDC);
+	void DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit);
+	bool CheckIn(CPoint pt);
+	CPoint Nearby_point(CPoint pt);
+	void newUpdate(LogicUnit *unit);
+	void Update(LogicUnit *unit);
+	int search_unit(CPoint pt,bool &isInput);
 
 // 재정의입니다.
 public:

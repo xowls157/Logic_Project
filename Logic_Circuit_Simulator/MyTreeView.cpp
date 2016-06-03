@@ -22,6 +22,7 @@ CMyTreeView::~CMyTreeView()
 }
 
 BEGIN_MESSAGE_MAP(CMyTreeView, CTreeView)
+	ON_WM_LBUTTONDBLCLK()
 END_MESSAGE_MAP()
 
 
@@ -48,7 +49,6 @@ void CMyTreeView::Dump(CDumpContext& dc) const
 void CMyTreeView::OnInitialUpdate()
 {
 	CTreeView::OnInitialUpdate();
-
 	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
 
 	// 이미지 리스트 생성과 초기화
@@ -61,12 +61,11 @@ void CMyTreeView::OnInitialUpdate()
 	il.Detach();
 
 	// 1-레벨 초기화
-	HTREEITEM hGate[4];
 	CString Gate[] = {
 		_T("논리게이트"), _T("플립플롭"), _T("입/출력"), _T("클럭")
 	};
 	for (int i = 0; i<4; i++)
-		hGate[i] = tree.InsertItem(Gate[i], 0, 0, TVI_ROOT, TVI_LAST);
+		this->hGate[i] = tree.InsertItem(Gate[i], 0, 0, TVI_ROOT, TVI_LAST);
 
 	// 2-레벨 초기화
 	tree.InsertItem(_T("ANDGATE"), 1, 1, hGate[0], TVI_LAST);
@@ -82,22 +81,6 @@ void CMyTreeView::OnInitialUpdate()
 
 	tree.InsertItem(_T("입력"), 1, 1, hGate[2], TVI_LAST);
 	tree.InsertItem(_T("출력"), 1, 1, hGate[2], TVI_LAST);
-	/*
-	CTreeCtrl m_taskList;
-	HTREEITEM hSelectedItem = m_taskList.GetSelectedItem();
-
-	if (hGate[1])
-	{
-	AndGate *in1 = new AndGate(CPoint(10, 10));
-
-	DrawList.AddHead(in1);
-
-	Invalidate();
-	// 선택한 Item의 Text 정보
-	//CString strData = m_taskList.GetItemText(hSelectedItem);
-	//CTreeView *test = (CTest *)m_taskList.GetItemData(hSelectedItem);
-	}
-	*/
 
 }
 
@@ -110,5 +93,80 @@ BOOL CMyTreeView::PreCreateWindow(CREATESTRUCT& cs)
 	cs.style |= TVS_LINESATROOT;
 	cs.style |= TVS_TRACKSELECT;
 
+
 	return CTreeView::PreCreateWindow(cs);
+}
+
+
+void CMyTreeView::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+
+	CTreeCtrl& treeCtrl = GetTreeCtrl();
+	CPoint  p;
+	CLogic_Circuit_SimulatorView *view;
+
+	GetCursorPos(&p);
+	::ScreenToClient(treeCtrl.m_hWnd, &p);
+	HTREEITEM hItem = treeCtrl.HitTest(p);
+
+	view = (CLogic_Circuit_SimulatorView *)((CMainFrame*)(AfxGetApp()->m_pMainWnd))->m_wndSplitter.GetPane(0, 1);
+
+	CString item_name = treeCtrl.GetItemText(hItem);
+
+
+	if (item_name == _T("ANDGATE")) {
+		AndGate *unit = new AndGate(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
+	}
+	else if (item_name == _T("ORGATE")) {
+		OrGate *unit = new OrGate(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
+	}
+	else if (item_name == _T("NOTGATE")) {
+		NotGate *unit = new NotGate(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
+	}
+	else if (item_name == _T("NANDGATE")) {
+		NANDGate *unit = new NANDGate(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
+	}
+	else if (item_name == _T("NORGATE")) {
+		NorGate *unit = new NorGate(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
+	}
+	else if (item_name == _T("XORGATE")) {
+		XorGate *unit = new XorGate(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
+	}
+	else if (item_name == _T("D-FF")) {
+		
+
+	}
+	else if (item_name == _T("JK-FF")) {
+		
+
+	}
+	else if (item_name == _T("T-FF")) {
+		
+
+	}
+	else if (item_name == _T("입력")) {
+		InputSwitch *unit = new InputSwitch(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
+	}
+	else if (item_name == _T("출력")) {
+		OutputSwitch  *unit = new OutputSwitch(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
+	}
+
+	CTreeView::OnLButtonDblClk(nFlags, point);
 }

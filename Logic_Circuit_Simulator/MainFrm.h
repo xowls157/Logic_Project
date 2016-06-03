@@ -17,6 +17,7 @@ public:
 // 작업입니다.
 public:
 	CSplitterWnd m_wndSplitter;
+	//CLogic_Circuit_SimulatorView *view;
 // 재정의입니다.
 public:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);

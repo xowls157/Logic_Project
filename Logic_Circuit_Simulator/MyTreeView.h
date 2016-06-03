@@ -1,5 +1,5 @@
 #pragma once
-
+#include "MainFrm.h"
 
 // CMyTreeView ∫‰¿‘¥œ¥Ÿ.
 
@@ -12,6 +12,7 @@ protected:
 	virtual ~CMyTreeView();
 
 public:
+	HTREEITEM hGate[4];
 #ifdef _DEBUG
 	virtual void AssertValid() const;
 #ifndef _WIN32_WCE
@@ -24,6 +25,7 @@ protected:
 public:
 	virtual void OnInitialUpdate();
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 };
 
 

@@ -38,10 +38,16 @@ public:
 
 	int get_putIndex(CPoint pt, bool &result);
 	bool is_input(CPoint pt);
+
+
 							//좌표 처리
 	void setPoint(CPoint setPt);
 	virtual void setPut_point(CPoint pt);
 	CPoint getPoint();
+
+	//연산기능
+	virtual void Op();
+
 	//Input값 처리
 	void initInput(int size);
 	void setInput(int index, bool state);
@@ -135,12 +141,15 @@ class OutputSwitch : public LogicUnit {
 public:
 	//호출시 기존값에서 변경함
 	bool updateOutput() {
-		this->setInput(0, (this->getInputList(0))->getOutput(0));
+		if (this->getInputList(0) != NULL) {
+			this->setInput(0, (this->getInputList(0))->getOutput(0));
 
-		if (this->getInput(0))
-			return true;
-		else
-			return false;
+			if (this->getInput(0))
+				return true;
+			else
+				return false;
+		}
+		return false;
 	}
 	void setPut_point(CPoint pt) {
 		this->input_pt = new CPoint[1];
@@ -188,10 +197,8 @@ public:
 class AndGate : public LogicUnit {
 
 public:
-	void andOp();
-
+	void Op();
 	void setPut_point(CPoint pt) {
-
 		this->input_pt = new CPoint[2];
 		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
 		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
@@ -205,7 +212,6 @@ public:
 		this->setMaxOutput(1);
 		this->initInput(2);
 		this->initOutput(1);
-
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
 		setPut_point(init_Pt);
@@ -216,7 +222,7 @@ public:
 class OrGate : public LogicUnit {
 
 public:
-	void orOp();
+	void Op();
 	void setPut_point(CPoint pt) {
 		this->input_pt = new CPoint[2];
 		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
@@ -232,7 +238,6 @@ public:
 		this->setMaxOutput(1);
 		this->initInput(2);
 		this->initOutput(1);
-
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
 		setPut_point(init_Pt);
@@ -243,8 +248,14 @@ public:
 class NotGate : public LogicUnit {
 
 public:
-	void notOp();
-
+	void Op();
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[2];
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
+		this->output_pt = new CPoint[1];
+		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+	}
 public:
 	NotGate(CPoint init_Pt) :LogicUnit(init_Pt) {
 		this->setUnitType(NotGate_type);
@@ -252,7 +263,6 @@ public:
 		this->setMaxOutput(1);
 		this->initInput(1);
 		this->initOutput(1);
-
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
 	}
@@ -263,8 +273,14 @@ class NANDGate : public LogicUnit
 {
 
 public:
-	void NandOp();
-
+	void Op();
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[2];
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
+		this->output_pt = new CPoint[1];
+		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+	}
 public:
 	NANDGate(CPoint init_Pt) :LogicUnit(init_Pt) {
 		this->setUnitType(NandGate_type);
@@ -283,8 +299,14 @@ class NorGate : public LogicUnit
 {
 
 public:
-	void NorOp();
-
+	void Op();
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[2];
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
+		this->output_pt = new CPoint[1];
+		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+	}
 public:
 	NorGate(CPoint init_Pt) :LogicUnit(init_Pt) {
 		this->setUnitType(NorGate_type);
@@ -303,8 +325,14 @@ class XorGate : public LogicUnit
 {
 
 public:
-	void XorOp();
-
+	void Op();
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[2];
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
+		this->output_pt = new CPoint[1];
+		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+	}
 public:
 	XorGate(CPoint init_Pt) :LogicUnit(init_Pt) {
 		this->setUnitType(XorGate_type);
@@ -323,7 +351,7 @@ class DFFGate : public LogicUnit
 {
 
 public:
-	void DffOp();
+	void Op();
 
 public:
 	DFFGate(CPoint init_Pt) :LogicUnit(init_Pt) 

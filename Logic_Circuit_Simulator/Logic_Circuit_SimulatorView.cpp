@@ -39,7 +39,6 @@ BEGIN_MESSAGE_MAP(CLogic_Circuit_SimulatorView, CView)
 	ON_COMMAND(ID_32777, &CLogic_Circuit_SimulatorView::CreateNor)
 	ON_COMMAND(ID_32782, &CLogic_Circuit_SimulatorView::CreateXor)
 	ON_COMMAND(ID_32783, &CLogic_Circuit_SimulatorView::CreateDFF)
-//	ON_WM_TIMER()
 	ON_WM_LBUTTONDBLCLK()
 	ON_WM_TIMER()
 END_MESSAGE_MAP()
@@ -61,13 +60,13 @@ BOOL CLogic_Circuit_SimulatorView::PreCreateWindow(CREATESTRUCT& cs)
 	// TODO: CREATESTRUCT cs를 수정하여 여기에서
 	//  Window 클래스 또는 스타일을 수정합니다.
 
-	move = false;
+	linning = move = false;
 	selected_Input = NULL;
 	selected_Output = NULL;
 	selected_Input_Index = -1;
 	selected_Output_Index = -1;
-	temp1 = temp2 = NULL;
-
+	prevx = prevy = -1;
+	
 	return CView::PreCreateWindow(cs);
 }
 
@@ -98,11 +97,18 @@ void CLogic_Circuit_SimulatorView::OnDraw(CDC* pDC)
 		point = temp->getPoint();
 		pDC->MoveTo(point);
 		pDC->LineTo(temp->endPoint);
+
+		pDC->Ellipse(point.x - 5, point.y - 5, point.x + 5, point.y + 5);
+		pDC->Ellipse(temp->endPoint.x - 5, temp->endPoint.y - 5, temp->endPoint.x + 5, temp->endPoint.y + 5);
+
 	}
 
-	pos = DrawList.GetHeadPosition(); //List의 헤더로 이동
+	pos = DrawList.GetTailPosition(); //List의 헤더로 이동
 	while (pos) {
-		LogicUnit *temp = (LogicUnit*)DrawList.GetNext(pos); //클래스객체에 List의 다음 링크 데이터 받기( 클래스주소가 들어있음 )
+		LogicUnit *temp = (LogicUnit*)DrawList.GetPrev(pos); //클래스객체에 List의 다음 링크 데이터 받기( 클래스주소가 들어있음 )
+		if (temp->isType(OutputSwitch_type) == true) {
+			((OutputSwitch*)temp)->updateOutput();
+		}
 		DrawUnit(pDC, temp->getPoint(), temp);
 	}
 }
@@ -219,7 +225,7 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->LineTo(pt.x - 20, pt.y + 20);
 	}
 	else if (unit->isType(AndGate_type)) {
-		((AndGate*)unit)->andOp();
+		((AndGate*)unit)->Op();
 
 		bit.LoadBitmapW(IDB_ANDGATE);
 		bit.GetBitmap(&bminfo);
@@ -239,6 +245,7 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 	}
 	else if (unit->isType(OrGate_type)) {
+		((OrGate*)unit)->Op();
 
 		bit.LoadBitmapW(IDB_ORGATE);
 		bit.GetBitmap(&bminfo);
@@ -249,6 +256,13 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
 			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
 			);
+
+		pDC->MoveTo(pt.x+8, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x +8, pt.y + 60);
+		pDC->LineTo(pt.x - 20, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 40);
+		pDC->LineTo(pt.x + 80, pt.y + 40);
 	}
 	else if (unit->isType(NotGate_type)) {
 
@@ -315,28 +329,23 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
 			);
 
-		/*
-		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->MoveTo(pt.x + 8, pt.y + 20);
 		pDC->LineTo(pt.x - 20, pt.y + 20);
-
-		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 8, pt.y + 60);
 		pDC->LineTo(pt.x - 20, pt.y + 60);
-
-
 		pDC->MoveTo(pt.x + 60, pt.y + 40);
 		pDC->LineTo(pt.x + 80, pt.y + 40);
-		*/
-
 	}
 }
 
 bool CLogic_Circuit_SimulatorView::CheckIn(CPoint point) {
 	POSITION pos;
 	CPoint temp_point;
-	startx = point.x;
-	starty = point.y;
 
 	current = NULL;
+
+	startx = point.x;
+	starty = point.y;
 
 	pos = DrawList.GetHeadPosition(); //List의 헤더로 이동
 	temp_point = point;
@@ -414,7 +423,41 @@ CPoint CLogic_Circuit_SimulatorView::Nearby_point(CPoint pt) {
 	//=====================================================
 }
 
-//
+//입력받은 유닛으로부터 후로 연결된 것들을 업데이트 시켜줌
+void CLogic_Circuit_SimulatorView::newUpdate(LogicUnit *unit) {
+	this->stack = new unitStack[this->DrawList.GetSize()];
+	this->stack_count = 0;
+	/*
+	for (int i = 0; i < this->DrawList.GetSize(); i++) {
+		stack[i].unit = NULL;
+		stack[i].prev = -1;
+	}
+
+	unit->Op();
+
+	for (int i = 0; i < unit->getCurrentOutput(); i++) {
+
+		if (stack[0].unit == NULL) {
+			stack[0].unit = unit->getOutputList[i];
+			stack[0].prev = unit->getOutput(i);
+		}
+		else if (stack[0].prev != unit->getOutput(i)) {
+
+
+		}
+
+
+	}
+	*/
+}
+
+void CLogic_Circuit_SimulatorView::Update(LogicUnit *unit) {
+	unit->Op();
+
+
+}
+
+//현재 클릭지점(point)가 어떤 게이트의 몇번째 입력지점인지 리턴해주고 isInput에 입력이면 true, 출력지점이면 false 
 int CLogic_Circuit_SimulatorView::search_unit(CPoint point, bool &isInput) {
 	POSITION pos;
 	CPoint pt;
@@ -449,8 +492,7 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point)
 	bool isInput = false;
 
 	//빈공간에 클릭이 됨
-	if (CheckIn(point) == false && 
-		(selected_Input == NULL || selected_Output == NULL)) {
+	if (CheckIn(point) == false && (selected_Input == NULL || selected_Output == NULL)) {
 		//혹시 유닛의 인풋이나 아웃풋쪽에 클릭이 됬는지 확인
 		result = search_unit(point, isInput);
 
@@ -472,24 +514,61 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point)
 				selected_Output = temp;
 				selected_Output_Index = result;
 			}
+		}
+		//빈영역에 선택된경우
+		else {
+			//분기를 만들어 선을 그려주기 추가 부분
+			
+		}
+
+
+		//현재 클릭된 좌표점부터 선 그리기 신호 추가.
+		if (linning) {
+			LineUnit* line;
+
+			//선 양쪽점 모두 게이트로 선택이 되었을경우 연결을 시켜줌
 			if (selected_Input != NULL && selected_Output != NULL) {
 				dc.MoveTo((selected_Input->output_pt)[selected_Input_Index].x, (selected_Input->output_pt)[selected_Input_Index].y);
 				dc.LineTo((selected_Output->input_pt)[selected_Output_Index].x, (selected_Output->input_pt)[selected_Output_Index].y);
 
-				LineUnit* line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], (selected_Output->input_pt)[selected_Output_Index]);
+				line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], (selected_Output->input_pt)[selected_Output_Index]);
 
 				LogicUnit::connect_line(line, selected_Input, selected_Input_Index, selected_Output, selected_Output_Index);
-
-				LineList.AddHead(line);
-
-				selected_Input = NULL;
-				selected_Output = NULL;
 			}
-}
-		//빈영역에 선택된경우
-		else {
-			//분기를 만들어 선을 그려주기 추가 부분
+			//신호를 쏘는것만 연결됬을때
+			else if (selected_Input != NULL) {
+				dc.MoveTo((selected_Input->output_pt)[selected_Input_Index].x, (selected_Input->output_pt)[selected_Input_Index].y);
+				dc.LineTo(Nearby_point(point));
 
+				line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(point));
+
+				LogicUnit::connect_Unit(selected_Input, selected_Input_Index, line, 0);
+			}
+			//신호를 받는것만 연결됬을때
+			else if (selected_Output != NULL) {
+				dc.MoveTo(line_start_pt);
+				dc.LineTo(Nearby_point(point));
+
+				line = new LineUnit(line_start_pt, Nearby_point(point));
+
+				LogicUnit::connect_Unit(line, 0, selected_Output, selected_Output_Index);
+			}
+			else if (selected_Input == NULL && selected_Output == NULL) {
+				dc.MoveTo(line_start_pt);
+				dc.LineTo(Nearby_point(point));
+
+				line = new LineUnit(line_start_pt, Nearby_point(point));
+			}
+			LineList.AddHead(line);
+
+			selected_Input = NULL;
+			selected_Output = NULL;
+
+			linning = false;
+		}
+		else {
+			linning = true;
+			line_start_pt = Nearby_point(point);
 		}
 	}
 	//빈공간이 아닐경우?
@@ -516,14 +595,15 @@ void CLogic_Circuit_SimulatorView::OnLButtonUp(UINT nFlags, CPoint point)
 			temp->setPoint(pt);
 			temp->setPut_point(pt);
 
-			Invalidate();
 		}
 	}
 	else {
 		//인풋 아웃풋 좌표 확인
 	}
 	move = false;
-
+	
+	Invalidate();
+	
 	CView::OnLButtonUp(nFlags, point);
 }
 
@@ -534,8 +614,8 @@ void CLogic_Circuit_SimulatorView::OnMouseMove(UINT nFlags, CPoint point)
 	CView::OnMouseMove(nFlags, point);
 	CClientDC dc(this);
 
-	if (nFlags & MK_LBUTTON == 1 && current != NULL) {
-
+	if (nFlags & MK_LBUTTON == 1 && current != NULL && linning != true) {
+		//유닛 이동부분
 		if (move)
 		{
 			LogicUnit *temp;
@@ -557,6 +637,26 @@ void CLogic_Circuit_SimulatorView::OnMouseMove(UINT nFlags, CPoint point)
 
 			Invalidate();
 		}
+	}
+	//선 그려주기 부분
+	else if (linning == true) {
+		CPoint temp(startx,starty);
+		dc.SelectStockObject(WHITE_PEN);
+
+		temp = Nearby_point(temp);
+		dc.MoveTo(temp);
+		dc.LineTo(prevx, prevy);
+		dc.Ellipse(prevx - 5, prevy - 5, prevx + 5, prevy + 5);
+
+		dc.SelectStockObject(BLACK_PEN);
+
+		dc.MoveTo(temp);
+		temp = Nearby_point(CPoint(point.x,point.y));
+		dc.LineTo(temp);
+		dc.Ellipse(temp.x - 5, temp.y - 5, temp.x + 5, temp.y + 5);
+
+		prevx = temp.x;
+		prevy = temp.y;
 	}
 }
 
@@ -635,8 +735,6 @@ void CLogic_Circuit_SimulatorView::OnLButtonDblClk(UINT nFlags, CPoint point)
 				}
 			}
 		}
-
-
 	}
 	CView::OnLButtonDblClk(nFlags, point);
 	Invalidate();
