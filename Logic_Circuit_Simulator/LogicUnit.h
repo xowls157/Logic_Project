@@ -113,6 +113,7 @@ public:
 class InputSwitch : public LogicUnit {
 public:
 	//호출시 기존값에서 변경함
+	void Op();
 	void setSwitch() {
 		if (this->getOutput(0) == false) {
 			this->setOutput(0, true);
@@ -184,6 +185,7 @@ private:
 	void setEndPoint(CPoint end_pt) {
 		endPoint = end_pt;
 	}
+	void Op();
 
 public:
 	CPoint endPoint;

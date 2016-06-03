@@ -308,6 +308,32 @@ void LogicUnit::onLabelName(CClientDC &dc) {
 	dc.TextOutW(label.pt.x, label.pt.y, label.UnitName);
 }
 
+void InputSwitch::Op(){
+	if(this->getCurrentOutput() != 0)
+		this->getOutputList(0)->setInput(0, this->getOutput(0));
+}
+
+void LineUnit::Op() {
+
+	for (int i = 0; i < this->getCurrentOutput(); i++) {
+		if (this->getInput(0) == true) {
+			this->setOutput(i, true);
+		}
+		else
+			this->setOutput(i, false);
+	}
+
+	if (this->getCurrentOutput() != 0) {
+		for (int i = 0; i < this->getMaxOutput(); i++) {
+			for (int j = 0; j < (this->getOutputList(i))->getMaxInput(); j++) {
+				if ((this->getOutputList(i))->getInputList(j) == this) {
+					(this->getOutputList(i))->setInput(j, this->getOutput(i));
+				}
+			}
+		}
+	}
+}
+
 //AND ¿¬»ê
 void AndGate::Op() {
 	if (this->getCurrentInput() == this->getMaxInput()) {

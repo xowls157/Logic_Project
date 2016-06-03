@@ -229,8 +229,6 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->LineTo(pt.x - 20, pt.y + 20);
 	}
 	else if (unit->isType(AndGate_type)) {
-		((AndGate*)unit)->Op();
-
 		bit.LoadBitmapW(IDB_ANDGATE);
 		bit.GetBitmap(&bminfo);
 		memDC.SelectObject(&bit);
@@ -249,8 +247,6 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 	}
 	else if (unit->isType(OrGate_type)) {
-		((OrGate*)unit)->Op();
-
 		bit.LoadBitmapW(IDB_ORGATE);
 		bit.GetBitmap(&bminfo);
 		memDC.SelectObject(&bit);
@@ -451,35 +447,74 @@ CPoint CLogic_Circuit_SimulatorView::Nearby_point(CPoint pt) {
 void CLogic_Circuit_SimulatorView::newUpdate(LogicUnit *unit) {
 	this->stack = new unitStack[this->DrawList.GetSize()];
 	this->stack_count = 0;
-	/*
+	
 	for (int i = 0; i < this->DrawList.GetSize(); i++) {
 		stack[i].unit = NULL;
-		stack[i].prev = -1;
+		stack[i].prev = NULL;
 	}
 
 	unit->Op();
 
+	stack[stack_count].unit = unit;
+	stack[stack_count].prev = new bool[unit->getMaxOutput()];
+
 	for (int i = 0; i < unit->getCurrentOutput(); i++) {
-
-		if (stack[0].unit == NULL) {
-			stack[0].unit = unit->getOutputList[i];
-			stack[0].prev = unit->getOutput(i);
-		}
-		else if (stack[0].prev != unit->getOutput(i)) {
-
-
-		}
-
-
+		stack[stack_count].prev[i] = unit->getOutput(i);
 	}
-	*/
+	stack_count++;
+	for (int i = 0; i < unit->getCurrentOutput(); i++) {
+		Update(unit->getOutputList(i));
+	}
 }
 
 void CLogic_Circuit_SimulatorView::Update(LogicUnit *unit) {
+	int temp = -1;
 	unit->Op();
 
+	temp = isInStack(unit);
 
+	//출력이 아니라면
+	if (unit->isType(OutputSwitch_type) == false) {
+
+		//스택이 비어있으면
+		if (stack[stack_count].unit == NULL) {
+			//스택에 없던거면
+			if (temp == -1) {
+				stack[stack_count].unit = unit;
+				stack[stack_count].prev = new bool[unit->getMaxOutput()];
+				for (int i = 0; i < unit->getCurrentOutput(); i++) {
+					stack[stack_count].prev[i] = unit->getOutput(i);
+				}
+				stack_count++;
+
+				for (int i = 0; i < unit->getCurrentOutput(); i++) {
+					Update(unit->getOutputList(i));
+				}
+			}
+			else {
+				for (int i = 0; i < unit->getCurrentOutput(); i++) {
+					//스택에 있던건대 i번째 출력의 결과가 다르면
+					if (stack[temp].prev[i] != unit->getOutput(i)) {
+						stack[temp].prev[i] = unit->getOutput(i);
+						Update(unit->getOutputList(i));
+					}
+				}
+			}
+		}
+	}
+	//====================================================
 }
+
+int CLogic_Circuit_SimulatorView::isInStack(LogicUnit *unit) {
+
+	for (int i = 0; (i < this->stack_count) && (this->stack[i].unit != NULL); i++) {
+		if (stack[i].unit == unit) {
+			return i;
+		}
+		else return -1;
+	}
+}
+
 
 //현재 클릭지점(point)가 어떤 게이트의 몇번째 입력지점인지 리턴해주고 isInput에 입력이면 true, 출력지점이면 false 
 int CLogic_Circuit_SimulatorView::search_unit(CPoint point, bool &isInput) {
@@ -758,6 +793,8 @@ void CLogic_Circuit_SimulatorView::OnLButtonDblClk(UINT nFlags, CPoint point)
 				if (temp->getPoint().y <= point.y && point.y <= temp->getPoint().y + temp->ImageSize.y ||
 					temp->getPoint().y + temp->ImageSize.y <= point.y && point.y <= temp->getPoint().y) {
 					((InputSwitch*)temp)->setSwitch();
+
+					newUpdate(temp);
 				}
 			}
 		}

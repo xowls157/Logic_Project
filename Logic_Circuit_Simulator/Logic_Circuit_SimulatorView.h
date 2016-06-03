@@ -8,7 +8,7 @@
 
 struct unitStack {
 	LogicUnit *unit;
-	bool prev;
+	bool* prev;
 };
 
 class CLogic_Circuit_SimulatorView : public CView
@@ -53,6 +53,7 @@ public:
 	CPoint Nearby_point(CPoint pt);
 	void newUpdate(LogicUnit *unit);
 	void Update(LogicUnit *unit);
+	int isInStack(LogicUnit *unit);
 	int search_unit(CPoint pt,bool &isInput);
 
 // 재정의입니다.
