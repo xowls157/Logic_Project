@@ -65,6 +65,7 @@ BOOL CLogic_Circuit_SimulatorView::PreCreateWindow(CREATESTRUCT& cs)
 	//  Window 클래스 또는 스타일을 수정합니다.
 
 	linning = move = false;
+	selected = NULL;
 	selected_Input = NULL;
 	selected_Output = NULL;
 	selected_Input_Index = -1;
@@ -84,11 +85,13 @@ void CLogic_Circuit_SimulatorView::OnDraw(CDC* pDC)
 		return;
 
 	// TODO: 여기에 원시 데이터에 대한 그리기 코드를 추가합니다.
-
+	CPen pen;
 	CFont font;
 	CBitmap bit;
 	CPoint point(10, 10);
 	POSITION pos;
+	pen.CreatePen(BS_SOLID, 5, RGB(0, 0, 255));
+
 
 
 	//클라이언트 영역에 점찍기
@@ -102,13 +105,20 @@ void CLogic_Circuit_SimulatorView::OnDraw(CDC* pDC)
 		pDC->MoveTo(point);
 
 		if (temp->isType(Branch_type) == false) {
-			pDC->LineTo(temp->endPoint);
-
+			
+			if (temp == selected) {
+				CPen *old = pDC->SelectObject(&pen);
+				pDC->LineTo(temp->endPoint);
+				pDC->SelectObject(old);
+			}
+			else {
+				pDC->LineTo(temp->endPoint);
+			}
 			pDC->Ellipse(point.x - 5, point.y - 5, point.x + 5, point.y + 5);
 			pDC->Ellipse(temp->endPoint.x - 5, temp->endPoint.y - 5, temp->endPoint.x + 5, temp->endPoint.y + 5);
 		}
 		else {
-			pDC->Ellipse(point.x - 5, point.y - 5, point.x + 5, point.y + 5);
+			pDC->Rectangle(point.x - 5, point.y - 5, point.x + 5, point.y + 5);
 		}
 
 	}
@@ -403,24 +413,35 @@ POSITION CLogic_Circuit_SimulatorView::CheckOnLine(CPoint pt) {
 	pos = LineList.GetHeadPosition(); //List의 헤더로 이동
 
 	while (pos) {
-		POSITION current_pos=pos;
+		POSITION current_pos = pos;
 		LineUnit *temp;
 		temp = (LineUnit *)LineList.GetNext(pos);
 
-		if (temp->getPoint().x == temp->endPoint.x) {
-			if (temp->getPoint().x == Nearby_point(pt).x) {
-				return current_pos;
+		if (temp->getPoint().x == temp->endPoint.x && temp->getPoint().x == Nearby_point(pt).x) {
+			if (temp->getPoint().y < temp->endPoint.y) {
+				if (temp->getPoint().y < Nearby_point(pt).y && Nearby_point(pt).y < temp->endPoint.y)
+					return current_pos;
+			}
+			else if (temp->endPoint.y < temp->getPoint().y) {
+				if (temp->endPoint.y < Nearby_point(pt).y && Nearby_point(pt).y < temp->getPoint().y) {
+					return current_pos;
+				}
 			}
 		}
-		else if (temp->getPoint().y == temp->endPoint.y) {
-			if (temp->getPoint().y == Nearby_point(pt).y) {
-				return current_pos;
+		else if (temp->getPoint().y == temp->endPoint.y && temp->getPoint().y == Nearby_point(pt).y) {
+			if (temp->getPoint().x < temp->endPoint.x) {
+				if (temp->getPoint().x < Nearby_point(pt).x && Nearby_point(pt).x < temp->endPoint.x )
+					return current_pos;
+			}
+			else if (temp->endPoint.x < temp->getPoint().x) {
+				if (temp->endPoint.x < Nearby_point(pt).x && Nearby_point(pt).x < temp->getPoint().x) {
+					return current_pos;
+				}
 			}
 		}
 	}
 	return NULL;
 }
-
 
 POSITION CLogic_Circuit_SimulatorView::CheckOnBranch(CPoint pt) {
 	POSITION pos;
@@ -608,8 +629,10 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 	int result;
 	bool isInput = false;
 
+
+
 	//빈공간에 클릭이 됨
-	if (CheckIn(point) == false && (selected_Input == NULL || selected_Output == NULL)) {
+	if (CheckIn(point) == false && (selected_Input == NULL || selected_Output == NULL) && (selected ==NULL)) {
 		//혹시 유닛의 인풋이나 아웃풋쪽에 클릭이 됬는지 확인
 		result = search_unit(point, isInput);
 
@@ -636,6 +659,12 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 		else {
 			//분기를 만들어 선을 그려주기 추가 부분
 			POSITION pos = CheckOnLine(point);
+			if (pos != NULL) {
+				LineUnit *selected_line = (LineUnit*)LineList.GetAt(pos);
+				selected = selected_line;
+			}
+			/*
+			POSITION pos = CheckOnLine(point);
 
 			if (pos != NULL) {
 				LineUnit * line = (LineUnit *)LineList.GetAt(pos);
@@ -647,7 +676,7 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 				LogicUnit::connect_Unit(line, 0, brc, 0);
 				LogicUnit::connect_Unit(brc, 0, line2, 0);
 				LineList.AddHead(brc);
-			}
+			}*/
 		}
 
 
@@ -686,16 +715,18 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 				dc.MoveTo(line_start_pt);
 				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
 
-				POSITION pos = CheckOnBranch(point);
+				
+				//POSITION pos = CheckOnBranch(point);
 
 				
 				line = new LineUnit(line_start_pt, Nearby_point(CPoint(prevx, prevy)));
 
+				/*
 				if (pos != NULL) {
 					branch* temp = (branch *)LineList.GetAt(pos);
 					LogicUnit::connect_Unit(temp,temp->getCurrentOutput(),line,0);
 					temp->setCurrentOutput(temp->getCurrentOutput() + 1);
-				}
+				}*/
 			}
 
 			LineList.AddHead(line);
@@ -706,9 +737,18 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 			linning = false;
 		}
 		else {
-			linning = true;
-			line_start_pt = Nearby_point(point);
+			if (selected == NULL) {
+				linning = true;
+				line_start_pt = Nearby_point(point);
+			}
+			else if (selected != NULL) {
+				Invalidate();
+			}
 		}
+	}
+	else if (selected != NULL) {
+		selected = NULL;
+		Invalidate();
 	}
 	//빈공간이 아닐경우?
 	else if(selected_Input != NULL || selected_Output != NULL)

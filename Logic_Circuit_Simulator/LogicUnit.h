@@ -243,8 +243,12 @@ public:
 		this->setMaxOutput(1);
 		this->initInput(2);
 		this->initOutput(1);
+		
+		//게이트 크기 설정
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+
+		//입력,출력지점 좌표 설정
 		setPut_point(init_Pt);
 	}
 };

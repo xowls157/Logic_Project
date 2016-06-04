@@ -41,16 +41,18 @@ public:
 	int prevy;
 
 	//게이트 간 연결시 임시로 저장해주는 변수
+	LogicUnit *selected;
 	LogicUnit *selected_Input;
 	LogicUnit *selected_Output;
 	int selected_Input_Index;
 	int selected_Output_Index;
 
+
 	//작업 메소드들
 	void CreatePoint(CDC* pDC);
 	void DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit);
-	bool CheckIn(CPoint pt);
 	POSITION CheckOnLine(CPoint pt);
+	bool CheckIn(CPoint pt);
 	POSITION CheckOnBranch(CPoint pt);
 
 	CPoint Nearby_point(CPoint pt);
