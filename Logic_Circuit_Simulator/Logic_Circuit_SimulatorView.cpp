@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CLogic_Circuit_SimulatorView, CView)
 	ON_WM_TIMER()
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_32784, &CLogic_Circuit_SimulatorView::OnLabel)
+	ON_WM_KEYDOWN()
 END_MESSAGE_MAP()
 
 // CLogic_Circuit_SimulatorView 생성/소멸
@@ -418,22 +419,22 @@ POSITION CLogic_Circuit_SimulatorView::CheckOnLine(CPoint pt) {
 
 		if (temp->getPoint().x == temp->endPoint.x && temp->getPoint().x == Nearby_point(pt).x) {
 			if (temp->getPoint().y < temp->endPoint.y) {
-				if (temp->getPoint().y < Nearby_point(pt).y && Nearby_point(pt).y < temp->endPoint.y)
+				if (temp->getPoint().y <= Nearby_point(pt).y && Nearby_point(pt).y <= temp->endPoint.y)
 					return current_pos;
 			}
 			else if (temp->endPoint.y < temp->getPoint().y) {
-				if (temp->endPoint.y < Nearby_point(pt).y && Nearby_point(pt).y < temp->getPoint().y) {
+				if (temp->endPoint.y <= Nearby_point(pt).y && Nearby_point(pt).y <= temp->getPoint().y) {
 					return current_pos;
 				}
 			}
 		}
 		else if (temp->getPoint().y == temp->endPoint.y && temp->getPoint().y == Nearby_point(pt).y) {
 			if (temp->getPoint().x < temp->endPoint.x) {
-				if (temp->getPoint().x < Nearby_point(pt).x && Nearby_point(pt).x < temp->endPoint.x )
+				if (temp->getPoint().x <= Nearby_point(pt).x && Nearby_point(pt).x <= temp->endPoint.x )
 					return current_pos;
 			}
 			else if (temp->endPoint.x < temp->getPoint().x) {
-				if (temp->endPoint.x < Nearby_point(pt).x && Nearby_point(pt).x < temp->getPoint().x) {
+				if (temp->endPoint.x <= Nearby_point(pt).x && Nearby_point(pt).x <= temp->getPoint().x) {
 					return current_pos;
 				}
 			}
@@ -515,10 +516,10 @@ CPoint CLogic_Circuit_SimulatorView::Nearby_point(CPoint pt) {
 
 //입력받은 유닛으로부터 후로 연결된 것들을 업데이트 시켜줌
 void CLogic_Circuit_SimulatorView::newUpdate(LogicUnit *unit) {
-	this->stack = new unitStack[this->DrawList.GetSize()];
+	this->stack = new unitStack[this->DrawList.GetSize()+ this->LineList.GetSize()];
 	this->stack_count = 0;
 	
-	for (int i = 0; i < this->DrawList.GetSize(); i++) {
+	for (int i = 0; i < (this->DrawList.GetSize()+this->LineList.GetSize()); i++) {
 		stack[i].unit = NULL;
 		stack[i].prev = NULL;
 	}
@@ -535,6 +536,7 @@ void CLogic_Circuit_SimulatorView::newUpdate(LogicUnit *unit) {
 	for (int i = 0; i < unit->getCurrentOutput(); i++) {
 		Update(unit->getOutputList(i));
 	}
+	this->stack_count = 0;
 }
 
 void CLogic_Circuit_SimulatorView::Update(LogicUnit *unit) {
@@ -602,6 +604,21 @@ int CLogic_Circuit_SimulatorView::search_unit(CPoint point, bool &isInput) {
 	int result;;
 	current = NULL;
 
+	pos = LineList.GetHeadPosition(); //List의 헤더로 이동
+
+	while (pos) {
+		current = pos;
+		LineUnit *temp;
+		temp = (LineUnit *)LineList.GetNext(pos);
+
+		//인풋이나 아웃풋쪽에 있는지 확인
+		pt = Nearby_point(point);					//마우스 포인터의 가까운 점을 구함.
+		result = temp->get_putIndex(pt, isInput);	//가까운점이 input점에 있는지 확인.
+		if (result != -1) {
+			return result;	//구한 연결점의 인덱스를 리턴해줌
+		}
+	}
+
 	pos = DrawList.GetHeadPosition(); //List의 헤더로 이동
 
 	while (pos) {
@@ -617,6 +634,7 @@ int CLogic_Circuit_SimulatorView::search_unit(CPoint point, bool &isInput) {
 		}
 	}
 
+
 	current = NULL;
 	return -1;
 }
@@ -625,6 +643,7 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	CClientDC dc(this);
 	LogicUnit* temp;
+	LineUnit *selected_line;
 	int result;
 	bool isInput = false;
 
@@ -656,26 +675,12 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 		}
 		//빈영역에 선택된경우
 		else {
-			//분기를 만들어 선을 그려주기 추가 부분
+			//연결이 안된 라인끼리 연결할경우
 			POSITION pos = CheckOnLine(point);
 			if (pos != NULL) {
-				LineUnit *selected_line = (LineUnit*)LineList.GetAt(pos);
+				selected_line = (LineUnit*)LineList.GetAt(pos);
 				selected = selected_line;
 			}
-			/*
-			POSITION pos = CheckOnLine(point);
-
-			if (pos != NULL) {
-				LineUnit * line = (LineUnit *)LineList.GetAt(pos);
-				LineUnit * line2 = new LineUnit(Nearby_point(point), line->endPoint);
-				branch * brc = new branch(Nearby_point(point),2);
-					
-				line->setEndPoint(Nearby_point(point));
-
-				LogicUnit::connect_Unit(line, 0, brc, 0);
-				LogicUnit::connect_Unit(brc, 0, line2, 0);
-				LineList.AddHead(brc);
-			}*/
 		}
 
 
@@ -697,7 +702,13 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 				dc.MoveTo((selected_Input->output_pt)[selected_Input_Index].x, (selected_Input->output_pt)[selected_Input_Index].y);
 				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
 
-				line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(CPoint(prevx, prevy)));
+				if ((selected_Input->output_pt)[selected_Input_Index] == Nearby_point(CPoint(prevx, prevy))) {
+					line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(line_start_pt));
+				}
+				else {
+					line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(CPoint(prevx, prevy)));
+				}
+
 
 				LogicUnit::connect_Unit(selected_Input, selected_Input_Index, line, 0);
 			}
@@ -706,26 +717,20 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 				dc.MoveTo(line_start_pt);
 				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
 
-				line = new LineUnit(line_start_pt, Nearby_point(point));
+				if ((selected_Output->input_pt)[selected_Output_Index] == Nearby_point(line_start_pt)) {
+					line = new LineUnit(Nearby_point(point), Nearby_point(line_start_pt));
+				}
+				else {
+					line = new LineUnit(line_start_pt, Nearby_point(point));
+				}
 
 				LogicUnit::connect_Unit(line, 0, selected_Output, selected_Output_Index);
 			}
 			else if (selected_Input == NULL && selected_Output == NULL) {
 				dc.MoveTo(line_start_pt);
 				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
-
-				
-				//POSITION pos = CheckOnBranch(point);
-
 				
 				line = new LineUnit(line_start_pt, Nearby_point(CPoint(prevx, prevy)));
-
-				/*
-				if (pos != NULL) {
-					branch* temp = (branch *)LineList.GetAt(pos);
-					LogicUnit::connect_Unit(temp,temp->getCurrentOutput(),line,0);
-					temp->setCurrentOutput(temp->getCurrentOutput() + 1);
-				}*/
 			}
 
 			LineList.AddHead(line);
@@ -736,6 +741,36 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 			linning = false;
 		}
 		else {
+
+			if (selected != NULL) {
+				if (((LineUnit*)selected)->endPoint.x == selected->getPoint().x) {
+					//세로 선에 시작점에 연결할때
+					if (((LineUnit*)selected)->getPoint().y == Nearby_point(point).y) {
+						selected_Output = selected_line;
+
+						selected = NULL;
+					}
+					//세로 선에 끝점에 연결할때
+					else if (((LineUnit*)selected)->endPoint.y == Nearby_point(point).y) {
+						selected_Input = selected_line;
+
+						selected = NULL;
+					}
+				}
+				else if (((LineUnit*)selected)->endPoint.y == selected->getPoint().y) {
+					if (((LineUnit*)selected)->getPoint().x == Nearby_point(point).x) {
+						selected_Output = selected_line;
+
+						selected = NULL;
+					}
+					else if (((LineUnit*)selected)->endPoint.x == Nearby_point(point).x) {
+						selected_Input = selected_line;
+
+						selected = NULL;
+					}
+				}
+			}
+
 			if (selected == NULL) {
 				linning = true;
 				line_start_pt = Nearby_point(point);
@@ -865,8 +900,6 @@ void CLogic_Circuit_SimulatorView::CreateInput()
 
 	Invalidate();
 }
-
-
 void CLogic_Circuit_SimulatorView::CreateOutput()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
@@ -877,8 +910,6 @@ void CLogic_Circuit_SimulatorView::CreateOutput()
 
 	Invalidate();
 }
-
-
 void CLogic_Circuit_SimulatorView::CreateAND()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
@@ -889,8 +920,6 @@ void CLogic_Circuit_SimulatorView::CreateAND()
 
 	Invalidate();
 }
-
-
 void CLogic_Circuit_SimulatorView::CreateOr()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
@@ -1010,7 +1039,6 @@ void CLogic_Circuit_SimulatorView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 }
 
-
 void CLogic_Circuit_SimulatorView::OnLabel()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
@@ -1021,4 +1049,56 @@ void CLogic_Circuit_SimulatorView::OnLabel()
 
 	temp->onLabelName(dc);
 	temp->label.state = true;
+}
+
+void CLogic_Circuit_SimulatorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
+{
+	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
+	
+	switch (nChar) {
+	case VK_DELETE: {
+		if (selected != NULL) {
+			bool isInput;
+			POSITION pos = LineList.Find(selected);
+			LineUnit *line = (LineUnit *)LineList.GetAt(pos);
+			LogicUnit* next = (LogicUnit*)(line->getOutputList(0));
+
+			int num = search_unit(line->getPoint(), isInput);
+
+			//선택된 라인의 어느한점이 다른 라인이랑 연결되있는지 확인
+			if (num == -1) {
+				if (line->getInputList(0)->isType(LineUnit_type)) {
+					num = 0;
+
+				}
+				else if (line->getOutputList(0)->isType(LineUnit_type)) {
+					num = 0;
+
+				}
+			}
+
+			if (num != -1) {
+				if (isInput) {
+					int num2 = search_unit(line->endPoint, isInput);
+					LogicUnit::disconnect_line(line, line->getInputList(0), num2, line->getOutputList(0), num);
+				}
+				else {
+					int num2 = search_unit(line->endPoint, isInput);
+					LogicUnit::disconnect_line(line, line->getInputList(0), num, line->getOutputList(0), num2);
+				}
+			}
+			else {
+
+			}
+			
+			LineList.RemoveAt(pos);
+			selected = NULL;
+
+			//newUpdate(next);
+			Invalidate();
+		}
+	}
+	}
+
+	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }

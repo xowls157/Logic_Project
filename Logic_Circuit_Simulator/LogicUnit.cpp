@@ -298,9 +298,11 @@ void LogicUnit::disconnect_Unit(LogicUnit *unit1, int out_number, LogicUnit *uni
 	unit2->setInput(in_number, false);
 }
 void LogicUnit::disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number) {
-
-	disconnect_Unit(unit1, out_number, line, 0);
-	disconnect_Unit(line, 0, unit2, in_number);
+	
+	if (unit1 != NULL)
+		disconnect_Unit(unit1, out_number, line, 0);
+	if (unit2 != NULL)
+		disconnect_Unit(line, 0, unit2, in_number);
 
 	delete line;
 }
@@ -496,5 +498,3 @@ void DFFGate::Op()
 	}
 
 }
-
-\\
