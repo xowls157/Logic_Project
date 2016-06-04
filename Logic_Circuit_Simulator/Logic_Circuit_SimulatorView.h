@@ -50,6 +50,9 @@ public:
 	void CreatePoint(CDC* pDC);
 	void DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit);
 	bool CheckIn(CPoint pt);
+	POSITION CheckOnLine(CPoint pt);
+	POSITION CheckOnBranch(CPoint pt);
+
 	CPoint Nearby_point(CPoint pt);
 	void newUpdate(LogicUnit *unit);
 	void Update(LogicUnit *unit);

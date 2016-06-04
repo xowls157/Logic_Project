@@ -3,8 +3,10 @@
 #include "unitLabel.h"
 
 enum Direction { NORTH, SOUTH, EAST, WEST };
-enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, AndGate_type, OrGate_type, NotGate_type, NandGate_type, NorGate_type, XorGate_type,
-DFFGate_type};
+enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, 
+	Branch_type, AndGate_type, OrGate_type, 
+	NotGate_type, NandGate_type, NorGate_type, 
+	XorGate_type, DFFGate_type};
 
 
 class LogicUnit
@@ -181,7 +183,7 @@ public:
 
 //유닛들을 연결하는 라인
 class LineUnit : public LogicUnit {
-private:
+public:
 	void setEndPoint(CPoint end_pt) {
 		endPoint = end_pt;
 	}
@@ -200,6 +202,23 @@ public:
 		this->output_pt = new CPoint[1];
 		this->input_pt[0].SetPoint(init_Pt.x, init_Pt.y);
 		this->output_pt[0].SetPoint(end_pt.x, end_pt.y);
+	}
+};
+
+class branch : public LineUnit {
+public:
+	branch(CPoint init_Pt,int OutNum) : LineUnit(init_Pt, init_Pt) {
+		this->setUnitType(Branch_type);
+		this->setMaxInput(1);
+		this->setMaxOutput(OutNum);
+		this->initInput(1);
+		this->initOutput(OutNum);
+
+		this->input_pt = new CPoint[1];
+		this->output_pt = new CPoint[1];
+
+		this->input_pt[0].SetPoint(init_Pt.x, init_Pt.y);
+		this->output_pt[0].SetPoint(init_Pt.x, init_Pt.x);
 	}
 };
 

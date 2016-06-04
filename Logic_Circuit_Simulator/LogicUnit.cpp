@@ -324,15 +324,6 @@ void LineUnit::Op() {
 			this->setOutput(i, false);
 	}
 
-	if (this->getCurrentOutput() != 0) {
-		for (int i = 0; i < this->getMaxOutput(); i++) {
-			for (int j = 0; j < (this->getOutputList(i))->getMaxInput(); j++) {
-				if ((this->getOutputList(i))->getInputList(j) == this) {
-					(this->getOutputList(i))->setInput(j, this->getOutput(i));
-				}
-			}
-		}
-	}
 }
 
 //AND ¿¬»ê

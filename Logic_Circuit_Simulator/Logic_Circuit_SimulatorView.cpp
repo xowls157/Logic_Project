@@ -100,10 +100,16 @@ void CLogic_Circuit_SimulatorView::OnDraw(CDC* pDC)
 
 		point = temp->getPoint();
 		pDC->MoveTo(point);
-		pDC->LineTo(temp->endPoint);
 
-		pDC->Ellipse(point.x - 5, point.y - 5, point.x + 5, point.y + 5);
-		pDC->Ellipse(temp->endPoint.x - 5, temp->endPoint.y - 5, temp->endPoint.x + 5, temp->endPoint.y + 5);
+		if (temp->isType(Branch_type) == false) {
+			pDC->LineTo(temp->endPoint);
+
+			pDC->Ellipse(point.x - 5, point.y - 5, point.x + 5, point.y + 5);
+			pDC->Ellipse(temp->endPoint.x - 5, temp->endPoint.y - 5, temp->endPoint.x + 5, temp->endPoint.y + 5);
+		}
+		else {
+			pDC->Ellipse(point.x - 5, point.y - 5, point.x + 5, point.y + 5);
+		}
 
 	}
 
@@ -390,6 +396,52 @@ bool CLogic_Circuit_SimulatorView::CheckIn(CPoint point) {
 	return false;
 }
 
+POSITION CLogic_Circuit_SimulatorView::CheckOnLine(CPoint pt) {
+	POSITION pos;
+	CPoint temp_point;
+
+	pos = LineList.GetHeadPosition(); //List의 헤더로 이동
+
+	while (pos) {
+		POSITION current_pos=pos;
+		LineUnit *temp;
+		temp = (LineUnit *)LineList.GetNext(pos);
+
+		if (temp->getPoint().x == temp->endPoint.x) {
+			if (temp->getPoint().x == Nearby_point(pt).x) {
+				return current_pos;
+			}
+		}
+		else if (temp->getPoint().y == temp->endPoint.y) {
+			if (temp->getPoint().y == Nearby_point(pt).y) {
+				return current_pos;
+			}
+		}
+	}
+	return NULL;
+}
+
+
+POSITION CLogic_Circuit_SimulatorView::CheckOnBranch(CPoint pt) {
+	POSITION pos;
+	CPoint temp_point;
+
+	pos = LineList.GetHeadPosition(); //List의 헤더로 이동
+
+	while (pos) {
+		POSITION current_pos = pos;
+		LineUnit *temp;
+		temp = (branch *)LineList.GetNext(pos);
+
+		if (temp->getPoint().x == temp->getPoint().y) {
+			if (temp->getPoint().x == Nearby_point(pt).x) {
+				return current_pos;
+			}
+		}
+	}
+	return NULL;
+}
+
 //근처의 점을 찾아 좌표를 리턴
 CPoint CLogic_Circuit_SimulatorView::Nearby_point(CPoint pt) {
 	
@@ -471,6 +523,16 @@ void CLogic_Circuit_SimulatorView::Update(LogicUnit *unit) {
 
 	temp = isInStack(unit);
 
+	if (unit->getCurrentOutput() != 0) {
+		for (int i = 0; i < unit->getMaxOutput(); i++) {
+			for (int j = 0; j < (unit->getOutputList(i))->getMaxInput(); j++) {
+				if ((unit->getOutputList(i))->getInputList(j) == unit) {
+					(unit->getOutputList(i))->setInput(j, unit->getOutput(i));
+				}
+			}
+		}
+	}
+
 	//출력이 아니라면
 	if (unit->isType(OutputSwitch_type) == false) {
 
@@ -500,7 +562,6 @@ void CLogic_Circuit_SimulatorView::Update(LogicUnit *unit) {
 			}
 		}
 	}
-	//====================================================
 }
 
 int CLogic_Circuit_SimulatorView::isInStack(LogicUnit *unit) {
@@ -574,7 +635,19 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 		//빈영역에 선택된경우
 		else {
 			//분기를 만들어 선을 그려주기 추가 부분
-			
+			POSITION pos = CheckOnLine(point);
+
+			if (pos != NULL) {
+				LineUnit * line = (LineUnit *)LineList.GetAt(pos);
+				LineUnit * line2 = new LineUnit(Nearby_point(point), line->endPoint);
+				branch * brc = new branch(Nearby_point(point),2);
+					
+				line->setEndPoint(Nearby_point(point));
+
+				LogicUnit::connect_Unit(line, 0, brc, 0);
+				LogicUnit::connect_Unit(brc, 0, line2, 0);
+				LineList.AddHead(brc);
+			}
 		}
 
 
@@ -594,16 +667,16 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 			//신호를 쏘는것만 연결됬을때
 			else if (selected_Input != NULL) {
 				dc.MoveTo((selected_Input->output_pt)[selected_Input_Index].x, (selected_Input->output_pt)[selected_Input_Index].y);
-				dc.LineTo(Nearby_point(point));
+				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
 
-				line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(point));
+				line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(CPoint(prevx, prevy)));
 
 				LogicUnit::connect_Unit(selected_Input, selected_Input_Index, line, 0);
 			}
 			//신호를 받는것만 연결됬을때
 			else if (selected_Output != NULL) {
 				dc.MoveTo(line_start_pt);
-				dc.LineTo(Nearby_point(point));
+				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
 
 				line = new LineUnit(line_start_pt, Nearby_point(point));
 
@@ -611,17 +684,27 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 			}
 			else if (selected_Input == NULL && selected_Output == NULL) {
 				dc.MoveTo(line_start_pt);
-				dc.LineTo(Nearby_point(point));
+				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
 
-				line = new LineUnit(line_start_pt, Nearby_point(point));
+				POSITION pos = CheckOnBranch(point);
+
+				
+				line = new LineUnit(line_start_pt, Nearby_point(CPoint(prevx, prevy)));
+
+				if (pos != NULL) {
+					branch* temp = (branch *)LineList.GetAt(pos);
+					LogicUnit::connect_Unit(temp,temp->getCurrentOutput(),line,0);
+					temp->setCurrentOutput(temp->getCurrentOutput() + 1);
+				}
 			}
-				LineList.AddHead(line);
 
-				selected_Input = NULL;
-				selected_Output = NULL;
+			LineList.AddHead(line);
+
+			selected_Input = NULL;
+			selected_Output = NULL;
 
 			linning = false;
-}
+		}
 		else {
 			linning = true;
 			line_start_pt = Nearby_point(point);
@@ -649,7 +732,6 @@ void CLogic_Circuit_SimulatorView::OnLButtonUp(UINT nFlags, CPoint point){
 
 			temp->setPoint(pt);
 			temp->setPut_point(pt);
-
 		}
 	}
 	else {
@@ -697,6 +779,8 @@ void CLogic_Circuit_SimulatorView::OnMouseMove(UINT nFlags, CPoint point){
 	//선 그려주기 부분
 	else if (linning == true) {
 		CPoint temp(startx,starty);
+		int lengthx, lengthy;
+
 		dc.SelectStockObject(WHITE_PEN);
 
 		temp = Nearby_point(temp);
@@ -706,8 +790,22 @@ void CLogic_Circuit_SimulatorView::OnMouseMove(UINT nFlags, CPoint point){
 
 		dc.SelectStockObject(BLACK_PEN);
 
+		if (point.x > temp.x)
+			lengthx = point.x - temp.x;
+		else
+			lengthx = temp.x - point.x;
+
+		if (point.y > temp.y)
+			lengthy = point.y - temp.y;
+		else
+			lengthy = temp.y - point.y;
+
 		dc.MoveTo(temp);
-		temp = Nearby_point(CPoint(point.x,point.y));
+		if (lengthx > lengthy)
+			temp = Nearby_point(CPoint(point.x, temp.y));
+		else
+			temp = Nearby_point(CPoint(temp.x, point.y));
+		
 		dc.LineTo(temp);
 		dc.Ellipse(temp.x - 5, temp.y - 5, temp.x + 5, temp.y + 5);
 
