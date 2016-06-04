@@ -436,7 +436,7 @@ public:
 //clock 미포함
 class TFFGate : public LogicUnit
 {
-
+	    
 public:
 	void TffOp(int num); // num은 클록신호
 
