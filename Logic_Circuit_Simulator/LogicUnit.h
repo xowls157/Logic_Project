@@ -6,7 +6,7 @@ enum Direction { NORTH, SOUTH, EAST, WEST };
 enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, 
 	Branch_type, AndGate_type, OrGate_type, 
 	NotGate_type, NandGate_type, NorGate_type, 
-	XorGate_type, DFFGate_type};
+	XorGate_type, DFFGate_type, JKFFGate_type, TFFGate_type};
 
 
 class LogicUnit
@@ -406,5 +406,51 @@ public:
 
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+	}
+};
+
+//JK플립플롭
+//clock 미포함
+class JKFFGate : public LogicUnit
+{
+
+public:
+	void JkffOp(int num); // num은 클록신호
+
+public:
+	JKFFGate(CPoint init_Pt) :LogicUnit(init_Pt)		//clock 별도 ?
+	{
+		this->setUnitType(JKFFGate_type);
+		this->setMaxInput(2);
+		this->setMaxOutput(2);
+		this->initInput(2);
+		this->initOutput(2);
+
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
+		setPut_point(init_Pt);
+	}
+};
+
+//T플립플롭
+//clock 미포함
+class TFFGate : public LogicUnit
+{
+
+public:
+	void TffOp(int num); // num은 클록신호
+
+public:
+	TFFGate(CPoint init_Pt) :LogicUnit(init_Pt)		//clock 별도 ?
+	{
+		this->setUnitType(TFFGate_type);
+		this->setMaxInput(1);
+		this->setMaxOutput(2);
+		this->initInput(1);
+		this->initOutput(2);
+
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
+		setPut_point(init_Pt);
 	}
 };
