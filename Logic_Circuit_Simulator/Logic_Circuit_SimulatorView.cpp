@@ -293,10 +293,9 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
 			);
 
-		pDC->MoveTo(pt.x, pt.y + 20);
-		pDC->LineTo(pt.x - 20, pt.y + 20);
-		pDC->MoveTo(pt.x, pt.y + 60);
-		pDC->LineTo(pt.x - 20, pt.y + 60);
+		pDC->MoveTo(pt.x, pt.y + 40);
+		pDC->LineTo(pt.x - 20, pt.y + 40);
+
 		pDC->MoveTo(pt.x + 60, pt.y + 40);
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 
