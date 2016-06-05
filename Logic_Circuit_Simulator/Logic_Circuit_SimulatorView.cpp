@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CLogic_Circuit_SimulatorView, CView)
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_32784, &CLogic_Circuit_SimulatorView::OnLabel)
 	ON_WM_KEYDOWN()
+	ON_COMMAND(ID_ROTATE, &CLogic_Circuit_SimulatorView::OnRotate)
 END_MESSAGE_MAP()
 
 // CLogic_Circuit_SimulatorView 생성/소멸
@@ -201,6 +202,9 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 	BITMAP bminfo;
 	CDC memDC;  //메모리 dc(장치와 연결되어 있지 않은 dc)
 	CPoint point(pt);
+	CPoint temp_pt,*prev_pt;
+
+	int dir_int = (int)unit->getDirction();
 
 	memDC.CreateCompatibleDC(pDC);
 
@@ -214,13 +218,30 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		memDC.SelectObject(&bit);
 
 		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, 40, 40,   //비트맵이 출력될 client 영역
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
 			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
 			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
 			);
 
-		pDC->MoveTo(pt.x + 40, pt.y + 20);
-		pDC->LineTo(pt.x + 60, pt.y + 20);
+		//입출력점부터 이미지까지의 거리.
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}
+		}
+		pDC->MoveTo(unit->output_pt[0]);
+		pDC->LineTo(unit->output_pt[0].x + temp_pt.x, unit->output_pt[0].y + temp_pt.y);
+		
 	}
 	if (unit->isType(OutputSwitch_type))
 	{
@@ -236,13 +257,29 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		memDC.SelectObject(&bit);
 
 		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, 40, 40,   //비트맵이 출력될 client 영역
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
 			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
 			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
 			);
 
-		pDC->MoveTo(pt.x, pt.y + 20);
-		pDC->LineTo(pt.x - 20, pt.y + 20);
+		//입출력점부터 이미지까지의 거리.
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}
+		}
+		pDC->MoveTo(unit->input_pt[0]);
+		pDC->LineTo(unit->input_pt[0].x + temp_pt.x, unit->input_pt[0].y + temp_pt.y);
 	}
 	else if (unit->isType(AndGate_type)) {
 		bit.LoadBitmapW(IDB_ANDGATE);
@@ -628,7 +665,7 @@ int CLogic_Circuit_SimulatorView::search_unit(CPoint point, bool &isInput) {
 
 		//인풋이나 아웃풋쪽에 있는지 확인
 		pt = Nearby_point(point);					//마우스 포인터의 가까운 점을 구함.
-		result = temp->get_putIndex(pt,isInput);	//가까운점이 input점에 있는지 확인.
+		result = temp->get_putIndex(pt, isInput);	//가까운점이 input점에 있는지 확인.
 		if (result != -1) {
 			return result;	//구한 연결점의 인덱스를 리턴해줌
 		}
@@ -806,6 +843,7 @@ void CLogic_Circuit_SimulatorView::OnLButtonUp(UINT nFlags, CPoint point){
 
 			temp->setPoint(pt);
 			temp->setPut_point(pt);
+
 		}
 	}
 	else {
@@ -845,7 +883,7 @@ void CLogic_Circuit_SimulatorView::OnMouseMove(UINT nFlags, CPoint point){
 
 			temp->setPoint(pt);
 			temp->setPut_point(pt);
-			temp->label.pt.SetPoint(pt.x, pt.y - 40);
+			temp->label.pt.SetPoint(pt.x, pt.y - 20);
 
 			Invalidate();
 		}
@@ -1049,12 +1087,13 @@ void CLogic_Circuit_SimulatorView::OnLabel()
 
 	temp->onLabelName(dc);
 	temp->label.state = true;
+	current = NULL;
 }
 
 void CLogic_Circuit_SimulatorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	
+
 	switch (nChar) {
 	case VK_DELETE: {
 		if (selected != NULL) {
@@ -1094,11 +1133,40 @@ void CLogic_Circuit_SimulatorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFla
 			LineList.RemoveAt(pos);
 			selected = NULL;
 
-			//newUpdate(next);
 			Invalidate();
 		}
 	}
 	}
 
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+
+void CLogic_Circuit_SimulatorView::OnRotate() 
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+
+
+	LogicUnit* temp = (LogicUnit *)DrawList.GetNext(current);
+
+	switch (temp->getDirction()) {
+	case EAST: {
+		temp->setDirction(NORTH);
+		break;
+	}
+	case NORTH: {
+		temp->setDirction(WEST);
+		break;
+	}case WEST: {
+		temp->setDirction(SOUTH);
+		break;
+	}case SOUTH: {
+		temp->setDirction(EAST);
+		break;
+	}
+	}
+
+	temp->setPut_point(temp->getPoint());
+	current = NULL;
+	Invalidate();
 }

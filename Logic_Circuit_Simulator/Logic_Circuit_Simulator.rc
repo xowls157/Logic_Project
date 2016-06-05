@@ -197,6 +197,7 @@ BEGIN
     POPUP "메뉴"
     BEGIN
         MENUITEM "라벨 붙이기",                      ID_32784
+        MENUITEM "회전 시키기",                      ID_ROTATE
     END
 END
 

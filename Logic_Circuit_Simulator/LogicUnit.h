@@ -2,7 +2,7 @@
 
 #include "unitLabel.h"
 
-enum Direction { NORTH, SOUTH, EAST, WEST };
+enum Direction { EAST, NORTH, WEST, SOUTH };
 enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, 
 	Branch_type, AndGate_type, OrGate_type, 
 	NotGate_type, NandGate_type, NorGate_type, 
@@ -32,6 +32,7 @@ private:
 	Direction direction = EAST;	//방향
 
 public:
+	CPoint base_pt;
 	CPoint *input_pt;		//입출력 좌표
 	CPoint *output_pt;		//입출력 좌표
 	CPoint ImageSize;
@@ -101,8 +102,8 @@ public:
 	void static disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_number, LogicUnit *unit2, int in_number);
 
 	void onLabelName(CDC *dc);
-
- 
+	void OnRotateInput();
+	void OnRotateOutput();
 
 public:
 	LogicUnit();
@@ -127,7 +128,13 @@ public:
 	void setPut_point(CPoint pt) {
 		this->input_pt = NULL;
 		this->output_pt = new CPoint[1];
-		this->output_pt[0].SetPoint(pt.x+60, pt.y+ 20);
+		int temp;
+
+		this->output_pt[0].SetPoint(pt.x + 60, pt.y + 20);
+		
+		for (int i = 0; i < (int)this->getDirction(); i++)
+			this->OnRotateOutput();
+
 	}
 
 public:
@@ -163,7 +170,11 @@ public:
 	void setPut_point(CPoint pt) {
 		this->input_pt = new CPoint[1];
 		this->output_pt = NULL;
-		this->input_pt[0].SetPoint(pt.x-20, pt.y+20);
+		int temp;
+		this->input_pt[0].SetPoint(pt.x + 60, pt.y + 20);
+
+		for (int i = 0; i < (int)this->getDirction(); i++)
+			this->OnRotateInput();
 	}
 public:
 	OutputSwitch(CPoint init_Pt) :LogicUnit(init_Pt) {

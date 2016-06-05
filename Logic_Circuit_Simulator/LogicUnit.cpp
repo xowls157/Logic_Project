@@ -8,7 +8,7 @@ LogicUnit::LogicUnit()
 
 LogicUnit::LogicUnit(CPoint init_pt)
 {
-	this->pt = init_pt;
+	this->base_pt = this->pt = init_pt;
 	this->currentInput = 0;
 	this->currentoutput = 0;
 	this->MaxInput = 0;
@@ -241,6 +241,12 @@ bool LogicUnit::isType(Unit_type type) {
 //입력받은 좌표가 몇번째 입력 혹은 출력인지 확인
 int LogicUnit::get_putIndex(CPoint pt,bool &result) {
 	result = false;
+
+	for (int i = 0; i != this->getMaxOutput(); i++) {
+		if (pt == this->output_pt[i])
+			return i;
+	}
+	
 	for (int i = 0; i != this->getMaxInput(); i++) {
 		if (pt == this->input_pt[i]) {
 			result = true;
@@ -248,10 +254,6 @@ int LogicUnit::get_putIndex(CPoint pt,bool &result) {
 		}
 	}
 
-	for (int i = 0; i != this->getMaxOutput(); i++) {
-		if (pt == this->output_pt[i])
-			return i;
-	}
 	return -1;
 }
 
@@ -309,6 +311,57 @@ void LogicUnit::disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_numbe
 
 void LogicUnit::onLabelName(CDC *dc) {
 	dc->TextOutW(label.pt.x, label.pt.y, label.UnitName);
+}
+void LogicUnit::OnRotateInput() {
+	int inputNum, temp;
+	bool OutRange=false;
+	inputNum = this->getMaxInput();
+
+	CPoint* temp_input_pt = new CPoint[inputNum];
+
+	for (int i = 0; i < inputNum; i++) {
+		temp_input_pt[i].x = this->getPoint().x + (-1)*(this->getPoint().y - this->input_pt[i].y);
+		temp_input_pt[i].y = this->getPoint().y + (this->getPoint().x - this->input_pt[i].x)+this->ImageSize.y;
+
+		if (temp_input_pt[i].x < 20 || temp_input_pt[i].y < 20) {
+			OutRange = true;
+		}
+		
+		if (OutRange != true) {
+			this->input_pt= temp_input_pt;
+		}
+		else break;
+	}
+
+	temp = this->ImageSize.y;
+	this->ImageSize.y = this->ImageSize.x;
+	this->ImageSize.x = temp;
+}
+void LogicUnit::OnRotateOutput() {
+	int outputNum, temp;
+	bool OutRange = false;
+
+	outputNum = this->getMaxOutput();
+
+	CPoint* temp_output_pt = new CPoint[outputNum];
+
+	for (int i = 0; i < outputNum; i++) {
+		temp_output_pt[i].x = this->getPoint().x + (-1)*(this->getPoint().y - this->output_pt[i].y);
+		temp_output_pt[i].y = this->getPoint().y + (this->getPoint().x - this->output_pt[i].x) + this->ImageSize.y;
+
+		if (temp_output_pt[i].x < 20 || temp_output_pt[i].y < 20) {
+			OutRange = true;
+		}
+
+		if (OutRange != true) {
+			this->output_pt = temp_output_pt;
+		}
+		else break;
+	}
+
+	temp = this->ImageSize.y;
+	this->ImageSize.y = this->ImageSize.x;
+	this->ImageSize.x = temp;
 }
 
 void InputSwitch::Op(){
