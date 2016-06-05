@@ -18,6 +18,10 @@
 #define new DEBUG_NEW
 #endif
 
+#include<iostream>
+
+using namespace std;
+
 // 
 // CLogic_Circuit_SimulatorView
 
@@ -93,8 +97,7 @@ void CLogic_Circuit_SimulatorView::OnDraw(CDC* pDC)
 	CPoint point(10, 10);
 	POSITION pos;
 	pen.CreatePen(BS_SOLID, 5, RGB(0, 0, 255));
-
-
+	
 
 	//클라이언트 영역에 점찍기
 	CreatePoint(pDC);	

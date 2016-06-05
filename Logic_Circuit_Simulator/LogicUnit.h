@@ -396,7 +396,7 @@ class DFFGate : public LogicUnit
 {
 
 public:
-	void Op();
+	void Op(int num);
 
 public:
 	DFFGate(CPoint init_Pt) :LogicUnit(init_Pt) {
