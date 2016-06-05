@@ -422,8 +422,9 @@ public:
 	void JkffOp(int num); // num은 클록신호
 
 public:
-	JKFFGate(CPoint init_Pt) :LogicUnit(init_Pt)		//clock 별도 ?
-	{
+	JKFFGate(CPoint init_Pt) :LogicUnit(init_Pt) {		//clock 별도 ?
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("JK-FF"));
 		this->setUnitType(JKFFGate_type);
 		this->setMaxInput(2);
 		this->setMaxOutput(2);
@@ -445,8 +446,9 @@ public:
 	void TffOp(int num); // num은 클록신호
 
 public:
-	TFFGate(CPoint init_Pt) :LogicUnit(init_Pt)		//clock 별도 ?
-	{
+	TFFGate(CPoint init_Pt) :LogicUnit(init_Pt) {		//clock 별도 ?
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("T-FF"));
 		this->setUnitType(TFFGate_type);
 		this->setMaxInput(1);
 		this->setMaxOutput(2);

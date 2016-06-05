@@ -307,6 +307,7 @@ void LogicUnit::disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_numbe
 	delete line;
 }
 
+//라벨붙이기
 void LogicUnit::onLabelName(CDC *dc) {
 	dc->TextOutW(label.pt.x, label.pt.y, label.UnitName);
 }

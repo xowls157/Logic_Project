@@ -1024,7 +1024,7 @@ void CLogic_Circuit_SimulatorView::OnTimer(UINT_PTR nIDEvent)
 	CView::OnTimer(nIDEvent);
 }
 
-
+//우클릭시 라벨붙이기 띄움
 void CLogic_Circuit_SimulatorView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
@@ -1039,6 +1039,7 @@ void CLogic_Circuit_SimulatorView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 }
 
+//라벨붙이기
 void CLogic_Circuit_SimulatorView::OnLabel()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
