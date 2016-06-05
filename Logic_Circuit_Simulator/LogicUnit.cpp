@@ -552,6 +552,7 @@ void JKFFGate::Op(int num) //클럭신호 미포함
 					{
 						this->setInput(1, true);
 					}
+					//작업중
 				}
 				*/
 			
