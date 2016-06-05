@@ -38,6 +38,24 @@
 #define IDB_JKFFGATE                    325
 #define IDB_BITMAP6                     326
 #define IDB_TFFGATE                     326
+#define IDB_ANDGATE2                    327
+#define IDB_ANDGATE3                    328
+#define IDB_ANDGATE4                    329
+#define IDB_ORGATE1                     330
+#define IDB_ORGATE2                     331
+#define IDB_ORGATE3                     332
+#define IDB_NOTGATE1                    333
+#define IDB_NOTGATE2                    334
+#define IDB_NOTGATE3                    335
+#define IDB_NANDGATE1                   336
+#define IDB_NANDGATE2                   337
+#define IDB_NANDGATE3                   338
+#define IDB_XORGATE1                    339
+#define IDB_XORGATE2                    340
+#define IDB_XORGATE3                    341
+#define IDB_NORGATE1                    342
+#define IDB_NORGATE2                    343
+#define IDB_NORGATE3                    344
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
@@ -55,10 +73,8 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        327
+#define _APS_NEXT_RESOURCE_VALUE        330
 #define _APS_NEXT_COMMAND_VALUE         32785
-//#define _APS_NEXT_RESOURCE_VALUE        325
-//#define _APS_NEXT_COMMAND_VALUE         32787
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310
 #endif

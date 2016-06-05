@@ -88,6 +88,7 @@ public:
 	//방향 설정
 	void setDirction(Direction dir);
 	Direction getDirction();
+	bool rotate_on;
 
 	//타입
 	void setUnitType(Unit_type type);
@@ -128,7 +129,6 @@ public:
 	void setPut_point(CPoint pt) {
 		this->input_pt = NULL;
 		this->output_pt = new CPoint[1];
-		int temp;
 
 		this->output_pt[0].SetPoint(pt.x + 60, pt.y + 20);
 		
@@ -244,6 +244,24 @@ public:
 		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
 		this->output_pt = new CPoint[1];
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+		
+		CPoint temp_pt = ImageSize;
+
+			for (int i = 0; i < (int)this->getDirction(); i++) {
+				int temp_size = ImageSize.y;
+				ImageSize.y = ImageSize.x;
+				ImageSize.x = temp_size;
+				this->OnRotateOutput();
+			}
+			 ImageSize = temp_pt;
+			for (int i = 0; i < (int)this->getDirction(); i++) {
+				int temp_size = ImageSize.y;
+				ImageSize.y = ImageSize.x;
+				ImageSize.x = temp_size;
+				this->OnRotateInput();
+			}
+			ImageSize = temp_pt;
+			
 	}
 public:
 	AndGate(CPoint init_Pt) :LogicUnit(init_Pt) {
@@ -275,6 +293,24 @@ public:
 		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
 		this->output_pt = new CPoint[1];
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+
+		CPoint temp_pt = ImageSize;
+
+			for (int i = 0; i < (int)this->getDirction(); i++) {
+				int temp_size = ImageSize.y;
+				ImageSize.y = ImageSize.x;
+				ImageSize.x = temp_size;
+				this->OnRotateOutput();
+			}
+			ImageSize = temp_pt;
+			for (int i = 0; i < (int)this->getDirction(); i++) {
+				int temp_size = ImageSize.y;
+				ImageSize.y = ImageSize.x;
+				ImageSize.x = temp_size;
+				this->OnRotateInput();
+			}
+			ImageSize = temp_pt;
+			rotate_on = false;
 	}
 
 public:
@@ -294,15 +330,32 @@ public:
 
 //NOT 게이트
 class NotGate : public LogicUnit {
-
 public:
 	void Op();
 	void setPut_point(CPoint pt) {
-		this->input_pt = new CPoint[2];
-		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
-		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
+		this->input_pt = new CPoint[1];
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 40);
 		this->output_pt = new CPoint[1];
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+
+		CPoint temp_pt = ImageSize;
+
+			for (int i = 0; i < (int)this->getDirction(); i++) {
+				int temp_size = ImageSize.y;
+				ImageSize.y = ImageSize.x;
+				ImageSize.x = temp_size;
+				this->OnRotateOutput();
+			}
+			ImageSize = temp_pt;
+			for (int i = 0; i < (int)this->getDirction(); i++) {
+				int temp_size = ImageSize.y;
+				ImageSize.y = ImageSize.x;
+				ImageSize.x = temp_size;
+				this->OnRotateInput();
+			}
+			ImageSize = temp_pt;
+			rotate_on = false;
+		
 	}
 public:
 	NotGate(CPoint init_Pt) :LogicUnit(init_Pt) {
@@ -315,6 +368,7 @@ public:
 		this->initOutput(1);
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+		setPut_point(init_Pt);
 	}
 };
 
@@ -330,6 +384,24 @@ public:
 		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
 		this->output_pt = new CPoint[1];
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+
+		CPoint temp_pt = ImageSize;
+
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateOutput();
+		}
+		ImageSize = temp_pt;
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateInput();
+		}
+		ImageSize = temp_pt;
+		rotate_on = false;
 	}
 public:
 	NANDGate(CPoint init_Pt) :LogicUnit(init_Pt) {
@@ -343,6 +415,8 @@ public:
 
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+
+		setPut_point(init_Pt);
 	}
 };
 
@@ -358,6 +432,24 @@ public:
 		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
 		this->output_pt = new CPoint[1];
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+
+		CPoint temp_pt = ImageSize;
+
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateOutput();
+		}
+		ImageSize = temp_pt;
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateInput();
+		}
+		ImageSize = temp_pt;
+		rotate_on = false;
 	}
 public:
 	NorGate(CPoint init_Pt) :LogicUnit(init_Pt) {
@@ -371,6 +463,8 @@ public:
 
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+
+		setPut_point(init_Pt);
 	}
 };
 
@@ -386,6 +480,24 @@ public:
 		this->input_pt[1].SetPoint(pt.x - 20, pt.y + 60);
 		this->output_pt = new CPoint[1];
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 40);
+
+		CPoint temp_pt = ImageSize;
+
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateOutput();
+		}
+		ImageSize = temp_pt;
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateInput();
+		}
+		ImageSize = temp_pt;
+		rotate_on = false;
 	}
 public:
 	XorGate(CPoint init_Pt) :LogicUnit(init_Pt) {
@@ -399,6 +511,8 @@ public:
 
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+
+		setPut_point(init_Pt);
 	}
 };
 
@@ -408,6 +522,16 @@ class DFFGate : public LogicUnit
 
 public:
 	void Op(int num);
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[2];
+		this->output_pt = new CPoint[2];
+
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[1].SetPoint(pt.x + 20, pt.y - 20);
+		
+		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 20);
+		this->output_pt[1].SetPoint(pt.x + 80, pt.y + 60);
+	}
 
 public:
 	DFFGate(CPoint init_Pt) :LogicUnit(init_Pt) {
@@ -431,6 +555,16 @@ class JKFFGate : public LogicUnit
 
 public:
 	void Op(int num); // num은 클록신호
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[2];
+		this->output_pt = new CPoint[2];
+
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[1].SetPoint(pt.x + 20, pt.y - 20);
+
+		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 20);
+		this->output_pt[1].SetPoint(pt.x + 80, pt.y + 60);
+	}
 
 public:
 	JKFFGate(CPoint init_Pt) :LogicUnit(init_Pt) {		//clock 별도 ?
@@ -455,6 +589,16 @@ class TFFGate : public LogicUnit
 	    
 public:
 	void Op(int num); // num은 클록신호
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[2];
+		this->output_pt = new CPoint[2];
+
+		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[1].SetPoint(pt.x + 20, pt.y - 20);
+
+		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 20);
+		this->output_pt[1].SetPoint(pt.x + 80, pt.y + 60);
+	}
 
 public:
 	TFFGate(CPoint init_Pt) :LogicUnit(init_Pt) {		//clock 별도 ?

@@ -15,6 +15,7 @@ LogicUnit::LogicUnit(CPoint init_pt)
 	this->Maxoutput = 0;
 	this->direction = EAST;
 	this->label.state = false;
+	this->rotate_on = false;
 }
 
 LogicUnit::~LogicUnit()
@@ -321,22 +322,19 @@ void LogicUnit::OnRotateInput() {
 	CPoint* temp_input_pt = new CPoint[inputNum];
 
 	for (int i = 0; i < inputNum; i++) {
-		temp_input_pt[i].x = this->getPoint().x + (-1)*(this->getPoint().y - this->input_pt[i].y);
-		temp_input_pt[i].y = this->getPoint().y + (this->getPoint().x - this->input_pt[i].x)+this->ImageSize.y;
+		temp_input_pt[i].x = this->getPoint().x + (this->input_pt[i].y - this->getPoint().y);
+		temp_input_pt[i].y = (this->getPoint().y - (this->input_pt[i].x-this->getPoint().x) + this->ImageSize.y);
 
 		if (temp_input_pt[i].x < 20 || temp_input_pt[i].y < 20) {
 			OutRange = true;
 		}
 		
-		if (OutRange != true) {
-			this->input_pt= temp_input_pt;
-		}
-		else break;
 	}
 
-	temp = this->ImageSize.y;
-	this->ImageSize.y = this->ImageSize.x;
-	this->ImageSize.x = temp;
+	if (OutRange != true) {
+		this->input_pt = temp_input_pt;
+	}
+
 }
 void LogicUnit::OnRotateOutput() {
 	int outputNum, temp;
@@ -347,22 +345,17 @@ void LogicUnit::OnRotateOutput() {
 	CPoint* temp_output_pt = new CPoint[outputNum];
 
 	for (int i = 0; i < outputNum; i++) {
-		temp_output_pt[i].x = this->getPoint().x + (-1)*(this->getPoint().y - this->output_pt[i].y);
-		temp_output_pt[i].y = this->getPoint().y + (this->getPoint().x - this->output_pt[i].x) + this->ImageSize.y;
+		temp_output_pt[i].x = this->getPoint().x + (this->output_pt[i].y - this->getPoint().y);
+		temp_output_pt[i].y = this->getPoint().y -(this->output_pt[i].x - this->getPoint().x) + this->ImageSize.y;
 
 		if (temp_output_pt[i].x < 20 || temp_output_pt[i].y < 20) {
 			OutRange = true;
 		}
-
-		if (OutRange != true) {
-			this->output_pt = temp_output_pt;
-		}
-		else break;
+		
 	}
-
-	temp = this->ImageSize.y;
-	this->ImageSize.y = this->ImageSize.x;
-	this->ImageSize.x = temp;
+	if (OutRange != true) {
+		this->output_pt = temp_output_pt;
+	}
 }
 
 void InputSwitch::Op(){

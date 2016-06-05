@@ -141,5 +141,59 @@
     <Image Include="res\bmp00010.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
+    <Image Include="res\bitmap7.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\bitmap8.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\bmp00011.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\orgate1.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\orgate2.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\orgate3.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\notgate1.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\notgate2.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\notgate3.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\nandgate.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\bmp00012.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\bmp00013.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\norgate1.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\norgate2.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\norgate3.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\xorgate1.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\xorgate2.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\xorgate3.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
   </ItemGroup>
 </Project>

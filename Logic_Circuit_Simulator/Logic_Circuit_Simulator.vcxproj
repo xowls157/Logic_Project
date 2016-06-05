@@ -224,6 +224,8 @@
     <Image Include="res\bitmap3.bmp" />
     <Image Include="res\bitmap5.bmp" />
     <Image Include="res\bitmap6.bmp" />
+    <Image Include="res\bitmap7.bmp" />
+    <Image Include="res\bitmap8.bmp" />
     <Image Include="res\bmp00001.bmp" />
     <Image Include="res\bmp00002.bmp" />
     <Image Include="res\bmp00003.bmp" />
@@ -234,9 +236,25 @@
     <Image Include="res\bmp00008.bmp" />
     <Image Include="res\bmp00009.bmp" />
     <Image Include="res\bmp00010.bmp" />
+    <Image Include="res\bmp00011.bmp" />
+    <Image Include="res\bmp00012.bmp" />
+    <Image Include="res\bmp00013.bmp" />
     <Image Include="res\Logic_Circuit_Simulator.ico" />
     <Image Include="res\Logic_Circuit_SimulatorDoc.ico" />
+    <Image Include="res\nandgate.bmp" />
+    <Image Include="res\norgate1.bmp" />
+    <Image Include="res\norgate2.bmp" />
+    <Image Include="res\norgate3.bmp" />
+    <Image Include="res\notgate1.bmp" />
+    <Image Include="res\notgate2.bmp" />
+    <Image Include="res\notgate3.bmp" />
+    <Image Include="res\orgate1.bmp" />
+    <Image Include="res\orgate2.bmp" />
+    <Image Include="res\orgate3.bmp" />
     <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\xorgate1.bmp" />
+    <Image Include="res\xorgate2.bmp" />
+    <Image Include="res\xorgate3.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

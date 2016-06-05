@@ -109,6 +109,42 @@ IDB_JKFFGATE            BITMAP                  "res\\bitmap6.bmp"
 
 IDB_TFFGATE             BITMAP                  "res\\bmp00010.bmp"
 
+IDB_ANDGATE2            BITMAP                  "res\\bitmap7.bmp"
+
+IDB_ANDGATE3            BITMAP                  "res\\bitmap8.bmp"
+
+IDB_ANDGATE4            BITMAP                  "res\\bmp00011.bmp"
+
+IDB_ORGATE1             BITMAP                  "res\\orgate1.bmp"
+
+IDB_ORGATE2             BITMAP                  "res\\orgate2.bmp"
+
+IDB_ORGATE3             BITMAP                  "res\\orgate3.bmp"
+
+IDB_NOTGATE1            BITMAP                  "res\\notgate1.bmp"
+
+IDB_NOTGATE2            BITMAP                  "res\\notgate2.bmp"
+
+IDB_NOTGATE3            BITMAP                  "res\\notgate3.bmp"
+
+IDB_NANDGATE1           BITMAP                  "res\\nandgate.bmp"
+
+IDB_NANDGATE2           BITMAP                  "res\\bmp00012.bmp"
+
+IDB_NANDGATE3           BITMAP                  "res\\bmp00013.bmp"
+
+IDB_XORGATE1            BITMAP                  "res\\xorgate1.bmp"
+
+IDB_XORGATE2            BITMAP                  "res\\xorgate2.bmp"
+
+IDB_XORGATE3            BITMAP                  "res\\xorgate3.bmp"
+
+IDB_NORGATE1            BITMAP                  "res\\norgate1.bmp"
+
+IDB_NORGATE2            BITMAP                  "res\\norgate2.bmp"
+
+IDB_NORGATE3            BITMAP                  "res\\norgate3.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
