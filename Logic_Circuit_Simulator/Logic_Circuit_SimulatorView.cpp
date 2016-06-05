@@ -1105,12 +1105,20 @@ void CLogic_Circuit_SimulatorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFla
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
 }
 
+//파일 새로만들기
 void CLogic_Circuit_SimulatorView::OnFileNew()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
 	while (!DrawList.IsEmpty()){
 		LogicUnit *temp = (LogicUnit *)this->DrawList.RemoveHead();
 		delete temp;
+
+		Invalidate();
+	}
+
+	while (!LineList.IsEmpty()) {
+		LogicUnit *temp2 = (LogicUnit *)this->LineList.RemoveHead();
+		delete temp2;
 
 		Invalidate();
 	}
