@@ -147,15 +147,21 @@ void CMyTreeView::OnLButtonDblClk(UINT nFlags, CPoint point)
 		view->Invalidate();
 	}
 	else if (item_name == _T("D-FF")) {
-
+		DFFGate *unit = new DFFGate(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
 
 	}
 	else if (item_name == _T("JK-FF")) {
-
+		JKFFGate *unit = new JKFFGate(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
 
 	}
 	else if (item_name == _T("T-FF")) {
-
+		TFFGate *unit = new TFFGate(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
 
 	}
 	else if (item_name == _T("ют╥б")) {

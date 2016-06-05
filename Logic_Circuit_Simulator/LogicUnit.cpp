@@ -466,8 +466,6 @@ void XorGate::Op()
 //DFF연산
 void DFFGate::Op()
 {
-	SetTimer(0, 1000,0,0);
-
 	if (this->getCurrentInput() == this->getMaxInput())
 	{
 		if ((this->getInput(0))) //참이면
@@ -496,6 +494,88 @@ void DFFGate::Op()
 	else
 	{
 		setOutput(0, false);
+	}
+
+}
+
+//JKFF연산
+//getinput(0) : J입력
+//getintput(1) : K입력
+//setoutput(0) : Q출력
+//setoutput(1) : Q'출력
+void JKFFGate::Op(int num) //클럭신호 미포함
+{
+
+	if (this->getCurrentInput() == this->getMaxInput())
+	{
+		if (num % 2 == 0) //clock을 받아서, '0'이 들어오면 과정을 수행하지 않고 넘어감
+		{
+
+		}
+		else
+		{
+			if ((this->getInput(0) == false) && (this->getInput(1) == false)) //(0,0)
+			{
+				this->setOutput(0, this->getInput(0));
+				this->setOutput(1, this->getInput(1));
+			}
+			else if ((this->getInput(0) == true) && (this->getInput(1) == false)) //(1,0)
+			{
+				this->setOutput(0, true);
+				this->setOutput(1, false);
+			}
+			else if ((this->getInput(0) == false) && (this->getInput(1) == true)) //(0,1)
+			{
+				this->setOutput(0, false);
+				this->setOutput(1, true);
+			}
+			else if ((this->getInput(0) == true) && (this->getInput(1) == true)) //(1,1)
+			{
+				this->setOutput(0, false);
+				this->setOutput(1, true);
+			}
+		}
+	}
+	else
+	{
+		setOutput(0, false);
+		setOutput(1, false);
+	}
+
+}
+
+//TFF연산
+//getinput(0) : T입력
+//getinput(1) : clock
+//setoutput(0) : Q출력
+//setoutput(1) : Q'출력
+void TFFGate::Op(int num) //클럭신호 미포함
+{
+
+	if (this->getCurrentInput() == this->getMaxInput())
+	{
+		if (num % 2 == 0)		//clock을 받아서, '0'이 들어오면 과정을 수행하지 않고 넘어감
+		{
+
+		}
+		else
+		{
+			if (this->getInput(0)  /* && 클록신호 */) //참
+			{
+				this->setOutput(0, false);
+				this->setOutput(1, true);
+			}
+			else if ((this->getInput(0) == false) /* && 클록신호 */)
+			{
+				this->setOutput(0, true);
+				this->setOutput(1, false);
+			}
+		}
+	}
+	else
+	{
+		setOutput(0, false);
+		setOutput(1, false);
 	}
 
 }

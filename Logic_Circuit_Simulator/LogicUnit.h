@@ -419,7 +419,7 @@ class JKFFGate : public LogicUnit
 {
 
 public:
-	void JkffOp(int num); // num은 클록신호
+	void Op(int num); // num은 클록신호
 
 public:
 	JKFFGate(CPoint init_Pt) :LogicUnit(init_Pt) {		//clock 별도 ?
@@ -443,7 +443,7 @@ class TFFGate : public LogicUnit
 {
 	    
 public:
-	void TffOp(int num); // num은 클록신호
+	void Op(int num); // num은 클록신호
 
 public:
 	TFFGate(CPoint init_Pt) :LogicUnit(init_Pt) {		//clock 별도 ?

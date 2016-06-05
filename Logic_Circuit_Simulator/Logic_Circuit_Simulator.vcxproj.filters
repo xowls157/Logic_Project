@@ -62,6 +62,9 @@
     <ClCompile Include="Logic_Circuit_SimulatorDoc.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Logic_Circuit_SimulatorView.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
     <ClCompile Include="LogicUnit.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -69,9 +72,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="MyTreeView.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Logic_Circuit_SimulatorView.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -133,6 +133,12 @@
       <Filter>리소스 파일</Filter>
     </Image>
     <Image Include="res\bmp00009.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\bitmap6.bmp">
+      <Filter>리소스 파일</Filter>
+    </Image>
+    <Image Include="res\bmp00010.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
   </ItemGroup>

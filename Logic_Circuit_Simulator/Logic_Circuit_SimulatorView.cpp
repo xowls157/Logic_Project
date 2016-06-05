@@ -366,7 +366,81 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->MoveTo(pt.x + 60, pt.y + 40);
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 	}
+	else if (unit->isType(DFFGate_type)) {
+		bit.LoadBitmapW(IDB_DFFGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
 
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+		);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 20);
+		pDC->LineTo(pt.x + 80, pt.y + 20);
+		pDC->MoveTo(pt.x + 60, pt.y + 60);
+		pDC->LineTo(pt.x + 80, pt.y + 60);
+		pDC->MoveTo(pt.x + 20, pt.y);
+		pDC->LineTo(pt.x + 20, pt.y - 20);
+
+	}
+	else if (unit->isType(JKFFGate_type)) {
+		bit.LoadBitmapW(IDB_JKFFGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+		);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->LineTo(pt.x - 20, pt.y + 60);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 20);
+		pDC->LineTo(pt.x + 80, pt.y + 20);
+		pDC->MoveTo(pt.x + 60, pt.y + 60);
+		pDC->LineTo(pt.x + 80, pt.y + 60);
+		pDC->MoveTo(pt.x + 20, pt.y);
+		pDC->LineTo(pt.x + 20, pt.y - 20);
+	}
+	else if (unit->isType(TFFGate_type)) {
+		bit.LoadBitmapW(IDB_TFFGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+		);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 20);
+		pDC->LineTo(pt.x + 80, pt.y + 20);
+		pDC->MoveTo(pt.x + 60, pt.y + 60);
+		pDC->LineTo(pt.x + 80, pt.y + 60);
+		pDC->MoveTo(pt.x + 20, pt.y);
+		pDC->LineTo(pt.x + 20, pt.y - 20);
+	}
 	if ((unit->label.state)) {
 		unit->onLabelName(pDC);
 	}
