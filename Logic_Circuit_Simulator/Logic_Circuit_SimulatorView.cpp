@@ -45,6 +45,7 @@ BEGIN_MESSAGE_MAP(CLogic_Circuit_SimulatorView, CView)
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_32784, &CLogic_Circuit_SimulatorView::OnLabel)
 	ON_WM_KEYDOWN()
+	ON_COMMAND(ID_FILE_NEW, &CLogic_Circuit_SimulatorView::OnFileNew)
 END_MESSAGE_MAP()
 
 // CLogic_Circuit_SimulatorView 생성/소멸
@@ -1102,4 +1103,15 @@ void CLogic_Circuit_SimulatorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFla
 	}
 
 	CView::OnKeyDown(nChar, nRepCnt, nFlags);
+}
+
+void CLogic_Circuit_SimulatorView::OnFileNew()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	while (!DrawList.IsEmpty()){
+		LogicUnit *temp = (LogicUnit *)this->DrawList.RemoveHead();
+		delete temp;
+
+		Invalidate();
+	}
 }
