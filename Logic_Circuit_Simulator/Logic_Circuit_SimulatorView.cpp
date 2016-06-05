@@ -18,6 +18,10 @@
 #define new DEBUG_NEW
 #endif
 
+#include<iostream>
+
+using namespace std;
+
 // 
 // CLogic_Circuit_SimulatorView
 
@@ -45,6 +49,7 @@ BEGIN_MESSAGE_MAP(CLogic_Circuit_SimulatorView, CView)
 	ON_WM_CONTEXTMENU()
 	ON_COMMAND(ID_32784, &CLogic_Circuit_SimulatorView::OnLabel)
 	ON_WM_KEYDOWN()
+	ON_COMMAND(ID_FILE_NEW, &CLogic_Circuit_SimulatorView::OnFileNew)
 	ON_COMMAND(ID_ROTATE, &CLogic_Circuit_SimulatorView::OnRotate)
 END_MESSAGE_MAP()
 
@@ -93,7 +98,6 @@ void CLogic_Circuit_SimulatorView::OnDraw(CDC* pDC)
 	CPoint point(10, 10);
 	POSITION pos;
 	pen.CreatePen(BS_SOLID, 5, RGB(0, 0, 255));
-
 
 
 	//클라이언트 영역에 점찍기
@@ -237,7 +241,7 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		}case SOUTH: {
 			temp_pt.SetPoint(0, -20);
 			break;
-		}
+	}
 		}
 		pDC->MoveTo(unit->output_pt[0]);
 		pDC->LineTo(unit->output_pt[0].x + temp_pt.x, unit->output_pt[0].y + temp_pt.y);
@@ -402,7 +406,81 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->MoveTo(pt.x + 60, pt.y + 40);
 		pDC->LineTo(pt.x + 80, pt.y + 40);
 	}
+	else if (unit->isType(DFFGate_type)) {
+		bit.LoadBitmapW(IDB_DFFGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
 
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+		);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 20);
+		pDC->LineTo(pt.x + 80, pt.y + 20);
+		pDC->MoveTo(pt.x + 60, pt.y + 60);
+		pDC->LineTo(pt.x + 80, pt.y + 60);
+		pDC->MoveTo(pt.x + 20, pt.y);
+		pDC->LineTo(pt.x + 20, pt.y - 20);
+
+	}
+	else if (unit->isType(JKFFGate_type)) {
+		bit.LoadBitmapW(IDB_JKFFGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+		);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->LineTo(pt.x - 20, pt.y + 60);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 20);
+		pDC->LineTo(pt.x + 80, pt.y + 20);
+		pDC->MoveTo(pt.x + 60, pt.y + 60);
+		pDC->LineTo(pt.x + 80, pt.y + 60);
+		pDC->MoveTo(pt.x + 20, pt.y);
+		pDC->LineTo(pt.x + 20, pt.y - 20);
+	}
+	else if (unit->isType(TFFGate_type)) {
+		bit.LoadBitmapW(IDB_TFFGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+		);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 20);
+		pDC->LineTo(pt.x + 80, pt.y + 20);
+		pDC->MoveTo(pt.x + 60, pt.y + 60);
+		pDC->LineTo(pt.x + 80, pt.y + 60);
+		pDC->MoveTo(pt.x + 20, pt.y);
+		pDC->LineTo(pt.x + 20, pt.y - 20);
+	}
 	if ((unit->label.state)) {
 		unit->onLabelName(pDC);
 	}
@@ -1062,7 +1140,7 @@ void CLogic_Circuit_SimulatorView::OnTimer(UINT_PTR nIDEvent)
 	CView::OnTimer(nIDEvent);
 }
 
-
+//우클릭시 라벨붙이기 띄움
 void CLogic_Circuit_SimulatorView::OnContextMenu(CWnd* pWnd, CPoint point)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
@@ -1077,6 +1155,7 @@ void CLogic_Circuit_SimulatorView::OnContextMenu(CWnd* pWnd, CPoint point)
 
 }
 
+//라벨붙이기
 void CLogic_Circuit_SimulatorView::OnLabel()
 {
 	// TODO: 여기에 명령 처리기 코드를 추가합니다.
@@ -1093,7 +1172,7 @@ void CLogic_Circuit_SimulatorView::OnLabel()
 void CLogic_Circuit_SimulatorView::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
+	
 	switch (nChar) {
 	case VK_DELETE: {
 		if (selected != NULL) {
@@ -1169,4 +1248,23 @@ void CLogic_Circuit_SimulatorView::OnRotate()
 	temp->setPut_point(temp->getPoint());
 	current = NULL;
 	Invalidate();
+}
+
+//파일 새로만들기
+void CLogic_Circuit_SimulatorView::OnFileNew()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	while (!DrawList.IsEmpty()){
+		LogicUnit *temp = (LogicUnit *)this->DrawList.RemoveHead();
+		delete temp;
+
+		Invalidate();
+	}
+
+	while (!LineList.IsEmpty()) {
+		LogicUnit *temp2 = (LogicUnit *)this->LineList.RemoveHead();
+		delete temp2;
+
+		Invalidate();
+	}
 }

@@ -101,9 +101,13 @@ IDB_NORGATE             BITMAP                  "res\\bmp00006.bmp"
 
 IDB_XORGATE             BITMAP                  "res\\bmp00007.bmp"
 
-IDB_BITMAP3             BITMAP                  "res\\bmp00008.bmp"
+IDB_DFFGATE             BITMAP                  "res\\bmp00008.bmp"
 
 IDB_BITMAP5             BITMAP                  "res\\bmp00009.bmp"
+
+IDB_JKFFGATE            BITMAP                  "res\\bitmap6.bmp"
+
+IDB_TFFGATE             BITMAP                  "res\\bmp00010.bmp"
 
 
 /////////////////////////////////////////////////////////////////////////////

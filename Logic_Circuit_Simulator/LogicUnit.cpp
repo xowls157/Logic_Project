@@ -309,6 +309,7 @@ void LogicUnit::disconnect_line(LogicUnit *line, LogicUnit *unit1, int out_numbe
 	delete line;
 }
 
+//라벨붙이기
 void LogicUnit::onLabelName(CDC *dc) {
 	dc->TextOutW(label.pt.x, label.pt.y, label.UnitName);
 }
@@ -419,7 +420,7 @@ void NotGate::Op()
 
 	if (this->getCurrentInput() == this->getMaxInput()) 
 	{
-		if (this->getInput(0))
+		if (this->getInput(0)) 
 		{
 			setOutput(0, false);
 		}
@@ -516,38 +517,161 @@ void XorGate::Op()
 }
 
 //DFF연산
-void DFFGate::Op()
+//getinput(0) : 입력신호
+void DFFGate::Op(int num)
 {
-	SetTimer(0, 1000,0,0);
-
 	if (this->getCurrentInput() == this->getMaxInput())
 	{
-		if ((this->getInput(0))) //참이면
+		if (num % 2 == 0) //clock을 받아서, '0'이 들어오면 과정을 수행하지 않고 넘어감
 		{
-			if (this->getInput(1)) //참이면
-			{
-				setOutput(0, true);
-			}
-			else //거짓이면
-			{
-				setOutput(0, false);
-			}
+
 		}
-		else //거짓이면
+		else
 		{
-			if (this->getInput(1)) //참이면
-			{
-				setOutput(0, false);
-			}
-			else //거짓이면
+			if ((this->getInput(0))) //참이면 1 - 1
 			{
 				setOutput(0, true);
+			}
+			else //거짓이면 0 - 0
+			{
+				setOutput(0, false);
 			}
 		}
 	}
 	else
 	{
 		setOutput(0, false);
+	}
+
+}
+
+//JKFF연산
+//getinput(0) : J입력
+//getintput(1) : K입력
+//setoutput(0) : Q출력
+//setoutput(1) : Q'출력
+void JKFFGate::Op(int num) //클럭신호 미포함
+{
+
+	if (this->getCurrentInput() == this->getMaxInput())
+	{
+		if (num % 2 == 0) //clock을 받아서, '0'이 들어오면 과정을 수행하지 않고 넘어감
+		{
+
+		}
+		else
+		{
+			/*
+			if (!(this->getInput(0))) // J가 false 0이라면
+			{
+				if (!(this->getOutput(1))) // Q'이 0이라면
+				{
+					this->setInput(0, false);
+				}
+				else if (this->getOutput(1)) // Q'이 1이라면
+				{
+					this->setInput(0, false);
+				}
+			}
+			else if (this->getInput(0)) //J가 True 1이라면
+			{
+				if (!(this->getOutput(1))) // Q'이 0이라면
+				{
+					this->setInput(0, false);
+				}
+				else if (this->getOutput(1)) // Q'이 1이라면
+				{
+					this->setInput(0, true);
+				}
+
+				if (!(this->getInput(1))) // K가 false 0이라면
+				{
+					if (!(this->getOutput(0))) // Q이 0이라면
+					{
+						this->setInput(1, false);
+					}
+					else if (this->getOutput(0)) // Q'이 1이라면
+					{
+						this->setInput(1, false);
+					}
+				}
+				else if (this->getInput(1)) //K가 True 1이라면
+				{
+					if (!(this->getOutput(0))) // Q'이 0이라면
+					{
+						this->setInput(1, false);
+					}
+					else if (this->getOutput(0)) // Q'이 1이라면
+					{
+						this->setInput(1, true);
+					}
+					//작업중
+				}
+				*/
+			
+
+
+		}
+	}
+		else
+		{
+			setOutput(0, false);
+			setOutput(1, false);
+		}
+
+}
+
+
+
+//TFF연산
+//getinput(0) : T입력
+//getinput(1) : clock
+//setoutput(0) : Q출력
+//setoutput(1) : Q'출력
+void TFFGate::Op(int num) //클럭신호 미포함
+{
+
+	if (this->getCurrentInput() == this->getMaxInput())
+	{
+		if (num % 2 == 0)		//clock을 받아서, '0'이 들어오면 과정을 수행하지 않고 넘어감
+		{
+
+		}
+		else // T입력신호
+		{
+			/*
+			if (this->getInput(0)) //입력이 true 1 이면
+			{
+				if (this->getOutput(0)) // 출력이 1이면
+				{
+					this->setInput(0, false);
+				}
+				else if (this->getOutput(0) == false)
+				{
+					this->setInput(0, true);
+				}
+			}
+			else if (this->getInput(0) == false) // 입력이 false 0이면
+			{
+				if (this->getOutput(0)) // 출력이 1이면
+				{
+					this->setInput(0, true);
+				}
+				else if (this->getOutput(0) == false) // 출력이 0이면
+				{
+					this->setInput(0, false);
+				}
+			}
+			*/
+			
+		}
+			
+		
+	}
+	else
+	{
+		setOutput(0, false);
+		setOutput(1, false);
 	}
 
 }

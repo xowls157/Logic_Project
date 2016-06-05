@@ -223,6 +223,7 @@
     <Image Include="res\bitmap2.bmp" />
     <Image Include="res\bitmap3.bmp" />
     <Image Include="res\bitmap5.bmp" />
+    <Image Include="res\bitmap6.bmp" />
     <Image Include="res\bmp00001.bmp" />
     <Image Include="res\bmp00002.bmp" />
     <Image Include="res\bmp00003.bmp" />
@@ -232,6 +233,7 @@
     <Image Include="res\bmp00007.bmp" />
     <Image Include="res\bmp00008.bmp" />
     <Image Include="res\bmp00009.bmp" />
+    <Image Include="res\bmp00010.bmp" />
     <Image Include="res\Logic_Circuit_Simulator.ico" />
     <Image Include="res\Logic_Circuit_SimulatorDoc.ico" />
     <Image Include="res\Toolbar.bmp" />
