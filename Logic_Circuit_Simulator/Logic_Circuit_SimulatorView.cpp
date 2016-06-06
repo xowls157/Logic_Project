@@ -129,7 +129,9 @@ void CLogic_Circuit_SimulatorView::OnDraw(CDC* pDC)
 			pDC->Ellipse(temp->endPoint.x - 5, temp->endPoint.y - 5, temp->endPoint.x + 5, temp->endPoint.y + 5);
 		}
 		else {
+			pDC->SelectStockObject(BLACK_BRUSH);
 			pDC->Rectangle(point.x - 5, point.y - 5, point.x + 5, point.y + 5);
+			pDC->SelectStockObject(NULL_BRUSH);
 		}
 
 	}
@@ -697,21 +699,68 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		CPoint point2(point.x + 40, point.y + 40);
 
 		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
 			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
 			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
 			);
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}
+		}
 
+		for (int i = 0; i < unit->getMaxOutput(); i++) {
+			pDC->MoveTo(unit->output_pt[i]);
+			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
+		}
 
-		pDC->MoveTo(pt.x, pt.y + 20);
-		pDC->LineTo(pt.x - 20, pt.y + 20);
-		pDC->MoveTo(pt.x, pt.y + 60);
-		pDC->MoveTo(pt.x + 60, pt.y + 20);
-		pDC->LineTo(pt.x + 80, pt.y + 20);
-		pDC->MoveTo(pt.x + 60, pt.y + 60);
-		pDC->LineTo(pt.x + 80, pt.y + 60);
-		pDC->MoveTo(pt.x + 20, pt.y);
-		pDC->LineTo(pt.x + 20, pt.y - 20);
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+
+		pDC->MoveTo(unit->input_pt[0]);
+		pDC->LineTo(unit->input_pt[0].x + temp_pt.x, unit->input_pt[0].y + temp_pt.y);
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}
+		}
+
+		pDC->MoveTo(unit->input_pt[1]);
+		pDC->LineTo(unit->input_pt[1].x + temp_pt.x, unit->input_pt[1].y + temp_pt.y);
 
 	}
 	else if (unit->isType(JKFFGate_type)) {
@@ -722,23 +771,88 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		CPoint point2(point.x + 40, point.y + 40);
 
 		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
 			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
 			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
 			);
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}
+		}
+
+		for (int i = 0; i < unit->getMaxOutput(); i++) {
+			pDC->MoveTo(unit->output_pt[i]);
+			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
+		}
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+
+		pDC->MoveTo(unit->input_pt[0]);
+		pDC->LineTo(unit->input_pt[0].x + temp_pt.x, unit->input_pt[0].y + temp_pt.y);
 
 
-		pDC->MoveTo(pt.x, pt.y + 20);
-		pDC->LineTo(pt.x - 20, pt.y + 20);
-		pDC->MoveTo(pt.x, pt.y + 60);
-		pDC->LineTo(pt.x - 20, pt.y + 60);
-		pDC->MoveTo(pt.x, pt.y + 60);
-		pDC->MoveTo(pt.x + 60, pt.y + 20);
-		pDC->LineTo(pt.x + 80, pt.y + 20);
-		pDC->MoveTo(pt.x + 60, pt.y + 60);
-		pDC->LineTo(pt.x + 80, pt.y + 60);
-		pDC->MoveTo(pt.x + 20, pt.y);
-		pDC->LineTo(pt.x + 20, pt.y - 20);
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}
+		}
+
+		pDC->MoveTo(unit->input_pt[1]);
+		pDC->LineTo(unit->input_pt[1].x + temp_pt.x, unit->input_pt[1].y + temp_pt.y);
+		
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+		pDC->MoveTo(unit->input_pt[2]);
+		pDC->LineTo(unit->input_pt[2].x + temp_pt.x, unit->input_pt[2].y + temp_pt.y);
+
 	}
 	else if (unit->isType(TFFGate_type)) {
 		bit.LoadBitmapW(IDB_TFFGATE);
@@ -748,21 +862,70 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		CPoint point2(point.x + 40, point.y + 40);
 
 		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
 			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
 			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
 			);
 
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}
+		}
 
-		pDC->MoveTo(pt.x, pt.y + 20);
-		pDC->LineTo(pt.x - 20, pt.y + 20);
-		pDC->MoveTo(pt.x, pt.y + 60);
-		pDC->MoveTo(pt.x + 60, pt.y + 20);
-		pDC->LineTo(pt.x + 80, pt.y + 20);
-		pDC->MoveTo(pt.x + 60, pt.y + 60);
-		pDC->LineTo(pt.x + 80, pt.y + 60);
-		pDC->MoveTo(pt.x + 20, pt.y);
-		pDC->LineTo(pt.x + 20, pt.y - 20);
+		for (int i = 0; i < unit->getMaxOutput(); i++) {
+			pDC->MoveTo(unit->output_pt[i]);
+			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
+		}
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+
+		pDC->MoveTo(unit->input_pt[0]);
+		pDC->LineTo(unit->input_pt[0].x + temp_pt.x, unit->input_pt[0].y + temp_pt.y);
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}
+		}
+
+		pDC->MoveTo(unit->input_pt[1]);
+		pDC->LineTo(unit->input_pt[1].x + temp_pt.x, unit->input_pt[1].y + temp_pt.y);
+
 	}
 	if ((unit->label.state)) {
 		unit->onLabelName(pDC);
@@ -940,41 +1103,44 @@ void CLogic_Circuit_SimulatorView::newUpdate(LogicUnit *unit) {
 
 void CLogic_Circuit_SimulatorView::Update(LogicUnit *unit) {
 	int temp = -1;
-	unit->Op();
+	unit->Op();		//연산
+	temp = isInStack(unit);//현재 도착한곳이 스택에 있는지 확인
 
-	temp = isInStack(unit);
-
+	//연산결과를 다음 연결되어있는것들의 입력값으로 전달해줌.
 	if (unit->getCurrentOutput() != 0) {
 		for (int i = 0; i < unit->getMaxOutput(); i++) {
 			for (int j = 0; j < (unit->getOutputList(i))->getMaxInput(); j++) {
-				if ((unit->getOutputList(i))->getInputList(j) == unit) {
+				//i번째 연결된것을 확인하고 값을 전달.
+				if ((unit->getOutputList(i))->getInputList(j) == unit) {	
 					(unit->getOutputList(i))->setInput(j, unit->getOutput(i));
 				}
 			}
 		}
 	}
-
-	//출력이 아니라면
+	//출력 램프에 도착하면 업데이트를 종료
 	if (unit->isType(OutputSwitch_type) == false) {
-
 		//스택이 비어있으면
 		if (stack[stack_count].unit == NULL) {
 			//스택에 없던거면
 			if (temp == -1) {
 				stack[stack_count].unit = unit;
 				stack[stack_count].prev = new bool[unit->getMaxOutput()];
+				
+				//이전값을 저장
 				for (int i = 0; i < unit->getCurrentOutput(); i++) {
 					stack[stack_count].prev[i] = unit->getOutput(i);
-		}
+				}
 				stack_count++;
-
+				
+				//모든 출력으로 연결된것들을 다시 업데이트
 				for (int i = 0; i < unit->getCurrentOutput(); i++) {
 					Update(unit->getOutputList(i));
 				}
 			}
+			//스택에 있던거라면
 			else {
 				for (int i = 0; i < unit->getCurrentOutput(); i++) {
-					//스택에 있던건대 i번째 출력의 결과가 다르면
+					//스택에 있던건대 i번째 출력의 결과가 다르면 다시 업데이트
 					if (stack[temp].prev[i] != unit->getOutput(i)) {
 						stack[temp].prev[i] = unit->getOutput(i);
 						Update(unit->getOutputList(i));

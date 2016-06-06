@@ -60,6 +60,9 @@
 #define IDR_MENU2                       347
 #define IDB_BITMAP7                     348
 #define IDB_CLOCK                       348
+#define IDB_DFFGATE1                    349
+#define IDB_DFFGATE2                    350
+#define IDB_DFFGATE3                    351
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773

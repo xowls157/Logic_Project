@@ -20,11 +20,9 @@ typedef struct segment seg;
 
 class LogicUnit
 {
-
 	//멤버변수들
 private:
 	CPoint pt;				//좌표
-
 	bool *input;			//입력받은 신호값
 	bool *output;			//출력할 신호값
 	bool *clock;			//clock 신호값
@@ -34,9 +32,6 @@ private:
 	int currentInput;		//입력받은 신호들의 현재갯수
 	int Maxoutput;			//출력해줄 신호들의 최대갯수
 	int currentoutput;		//입력받은 신호들의 현재갯수
-
-
-
 	Unit_type type;			//유닛 타입
 	Direction direction = EAST;	//방향
 
@@ -48,11 +43,7 @@ public:
 	unitLabel label;		//라벨
 
 
-	int get_putIndex(CPoint pt, bool &result);
-	bool is_input(CPoint pt);
-
-
-							//좌표 처리
+	//좌표 처리
 	void setPoint(CPoint setPt);
 	virtual void setPut_point(CPoint pt);
 	CPoint getPoint();
@@ -94,6 +85,9 @@ public:
 	int getMaxOutput();
 	void setCurrentOutput(int size);
 	int getCurrentOutput();
+
+	int get_putIndex(CPoint pt, bool &result);	//
+	bool is_input(CPoint pt);
 
 	//방향 설정
 	void setDirction(Direction dir);
@@ -301,7 +295,9 @@ public:
 class AndGate : public LogicUnit {
 
 public:
+	//연산작업
 	void Op();
+	//입출력 좌표 셋팅 작업
 	void setPut_point(CPoint pt) {
 		this->input_pt = new CPoint[2];
 		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
@@ -329,9 +325,11 @@ public:
 	}
 public:
 	AndGate(CPoint init_Pt) :LogicUnit(init_Pt) {
+		//라벨 좌표,이름 입력
 		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
 		this->label.UnitName.SetString(_T("AndGate"));
 		this->setUnitType(AndGate_type);
+		//입출력 수 세팅 및 초기화
 		this->setMaxInput(2);
 		this->setMaxOutput(1);
 		this->initInput(2);
@@ -595,6 +593,24 @@ public:
 		
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 20);
 		this->output_pt[1].SetPoint(pt.x + 80, pt.y + 60);
+
+		CPoint temp_pt = ImageSize;
+
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateOutput();
+		}
+		ImageSize = temp_pt;
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateInput();
+		}
+		ImageSize = temp_pt;
+		rotate_on = false;
 	}
 
 public:
@@ -609,6 +625,7 @@ public:
 
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+		this->setPut_point(init_Pt);
 	}
 };
 
@@ -630,6 +647,24 @@ public:
 
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 20);
 		this->output_pt[1].SetPoint(pt.x + 80, pt.y + 60);
+
+		CPoint temp_pt = ImageSize;
+
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateOutput();
+		}
+		ImageSize = temp_pt;
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateInput();
+		}
+		ImageSize = temp_pt;
+		rotate_on = false;
 	}
 
 public:
@@ -664,6 +699,24 @@ public:
 
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 20);
 		this->output_pt[1].SetPoint(pt.x + 80, pt.y + 60);
+
+		CPoint temp_pt = ImageSize;
+
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateOutput();
+		}
+		ImageSize = temp_pt;
+		for (int i = 0; i < (int)this->getDirction(); i++) {
+			int temp_size = ImageSize.y;
+			ImageSize.y = ImageSize.x;
+			ImageSize.x = temp_size;
+			this->OnRotateInput();
+		}
+		ImageSize = temp_pt;
+		rotate_on = false;
 	}
 
 public:

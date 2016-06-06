@@ -342,13 +342,13 @@ void LogicUnit::OnRotateInput() {
 	CPoint* temp_input_pt = new CPoint[inputNum];
 
 	for (int i = 0; i < inputNum; i++) {
+		//좌표점 회전 작업
 		temp_input_pt[i].x = this->getPoint().x + (this->input_pt[i].y - this->getPoint().y);
 		temp_input_pt[i].y = (this->getPoint().y - (this->input_pt[i].x-this->getPoint().x) + this->ImageSize.y);
 
 		if (temp_input_pt[i].x < 20 || temp_input_pt[i].y < 20) {
 			OutRange = true;
 		}
-		
 	}
 
 	if (OutRange != true) {

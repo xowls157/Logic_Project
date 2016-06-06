@@ -149,6 +149,12 @@ IDB_SEGMENT             BITMAP                  "res\\bmp00014.bmp"
 
 IDB_CLOCK               BITMAP                  "res\\bmp00015.bmp"
 
+IDB_DFFGATE1            BITMAP                  "res\\dffgate1.bmp"
+
+IDB_DFFGATE2            BITMAP                  "res\\dffgate2.bmp"
+
+IDB_DFFGATE3            BITMAP                  "res\\dffgate3.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
