@@ -147,6 +147,8 @@ IDB_NORGATE3            BITMAP                  "res\\norgate3.bmp"
 
 IDB_SEGMENT             BITMAP                  "res\\bmp00014.bmp"
 
+IDB_CLOCK               BITMAP                  "res\\bmp00015.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

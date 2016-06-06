@@ -102,7 +102,8 @@ void CLogic_Circuit_SimulatorView::OnDraw(CDC* pDC)
 	CPoint point(10, 10);
 	POSITION pos;
 	pen.CreatePen(BS_SOLID, 5, RGB(0, 0, 255));
-
+	
+	SetTimer(0, 1000, 0);
 
 	//클라이언트 영역에 점찍기
 	CreatePoint(pDC);	
@@ -224,7 +225,8 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 
 	memDC.CreateCompatibleDC(pDC);
 
-	if (unit->isType(InputSwitch_type)) {
+	if (unit->isType(InputSwitch_type)) 
+	{
 
 		if (unit->getOutput(0) == true)
 			bit.LoadBitmapW(IDB_OffSwitch);
@@ -331,8 +333,6 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 
 			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
 		}
-
-
 
 	}
 	else if (unit->isType(AndGate_type)) {
@@ -1419,7 +1419,18 @@ void CLogic_Circuit_SimulatorView::CreateDFF()
 void CLogic_Circuit_SimulatorView::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-
+	/*
+	Clock_pulse *clr;
+	InputSwitch *inp;
+	POSITION pos;
+	pos = LineList.GetHeadPosition();
+	
+	while (pos)
+	{
+		clr->setSwitch();
+		newUpdate(clr);
+	}
+	*/
 	CView::OnTimer(nIDEvent);
 }
 
