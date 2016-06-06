@@ -51,6 +51,10 @@ BEGIN_MESSAGE_MAP(CLogic_Circuit_SimulatorView, CView)
 	ON_WM_KEYDOWN()
 	ON_COMMAND(ID_FILE_NEW, &CLogic_Circuit_SimulatorView::OnFileNew)
 	ON_COMMAND(ID_ROTATE, &CLogic_Circuit_SimulatorView::OnRotate)
+	ON_COMMAND(ID_GATECOPY, &CLogic_Circuit_SimulatorView::OnGatecopy)
+	ON_COMMAND(ID_GATECUT, &CLogic_Circuit_SimulatorView::OnGatecut)
+	ON_COMMAND(ID_PASTE, &CLogic_Circuit_SimulatorView::OnPaste)
+	ON_COMMAND(ID_Delete, &CLogic_Circuit_SimulatorView::OnDelete)
 END_MESSAGE_MAP()
 
 // CLogic_Circuit_SimulatorView 생성/소멸
@@ -1425,10 +1429,16 @@ void CLogic_Circuit_SimulatorView::OnContextMenu(CWnd* pWnd, CPoint point)
 	// TODO: 여기에 메시지 처리기 코드를 추가합니다.
 
 	CMenu menu;
+	CMenu menu2;
 	menu.LoadMenu(IDR_MENU1);
+	menu2.LoadMenu(IDR_MENU2);
 
 	if (CheckIn(this->mPoint) == true){
 		CMenu *pMenu = menu.GetSubMenu(0);
+		pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, AfxGetMainWnd());
+	}
+	else {
+		CMenu *pMenu = menu2.GetSubMenu(0);
 		pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, point.x, point.y, AfxGetMainWnd());
 	}
 
@@ -1547,4 +1557,142 @@ void CLogic_Circuit_SimulatorView::OnFileNew()
 
 		Invalidate();
 	}
+}
+
+
+void CLogic_Circuit_SimulatorView::OnGatecopy()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	LogicUnit *temp;
+	Temp_stack = (LogicUnit *)DrawList.GetNext(current);
+/*
+	this->Temp_stack.AddHead(temp);
+	Temp_stack.RemoveAll();*/
+	current = NULL;
+}
+
+
+void CLogic_Circuit_SimulatorView::OnGatecut()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	LogicUnit *temp;
+	POSITION pos;
+	pos = current;
+	Temp_stack = (LogicUnit *)DrawList.GetNext(current);
+	
+	
+
+	Temp_stack->deleteUnit();
+	DrawList.RemoveAt(pos);
+	
+	/*	this->Temp_stack.AddHead(temp);
+	Temp_stack.RemoveAll();*/
+	current = NULL;
+	Invalidate();
+}
+
+
+void CLogic_Circuit_SimulatorView::OnDelete()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	LogicUnit *temp;
+	POSITION pos;
+	pos = current;
+	Temp_stack = (LogicUnit *)DrawList.GetNext(current);
+
+	Temp_stack->deleteUnit();
+	DrawList.RemoveAt(pos);
+	delete Temp_stack;
+	Temp_stack = NULL;
+	current = NULL;
+	Invalidate();
+}
+
+
+void CLogic_Circuit_SimulatorView::OnPaste()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	LogicUnit* temp;
+	LogicUnit* newLogic;
+	POSITION pos=NULL;
+	
+	if(Temp_stack != NULL) {
+			if (Temp_stack->isType(AndGate_type)) {
+				AndGate *unit = new AndGate(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+			}
+			else if (Temp_stack->isType(OrGate_type)) {
+				OrGate *unit = new OrGate(Nearby_point(mPoint));
+
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+			}
+			else if (Temp_stack->isType(NotGate_type)) {
+				NotGate *unit = new NotGate(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+			}
+			else if (Temp_stack->isType(NandGate_type)) {
+				NANDGate *unit = new NANDGate(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+			}
+			else if (Temp_stack->isType(NorGate_type)) {
+				NorGate *unit = new NorGate(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+			}
+			else if (Temp_stack->isType(XorGate_type)) {
+				XorGate *unit = new XorGate(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+			}
+			else if (Temp_stack->isType(DFFGate_type)) {
+				DFFGate *unit = new DFFGate(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+
+			}
+			else if (Temp_stack->isType(JKFFGate_type)) {
+				JKFFGate *unit = new JKFFGate(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+
+			}
+			else if (Temp_stack->isType(TFFGate_type)) {
+				TFFGate *unit = new TFFGate(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+
+			}
+			else if (Temp_stack->isType(InputSwitch_type)) {
+				InputSwitch *unit = new InputSwitch(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+			}
+			else if (Temp_stack->isType(OutputSwitch_type)) {
+				OutputSwitch  *unit = new OutputSwitch(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+			}
+			else if (Temp_stack->isType(Segment_type)) {
+				Segment *unit = new Segment(Nearby_point(mPoint));
+				unit->setDirction(Temp_stack->getDirction());
+				this->DrawList.AddHead(unit);
+				this->Invalidate();
+			}
+	}
+	Temp_stack = NULL;
 }

@@ -59,6 +59,7 @@ public:
 
 	//연산기능
 	virtual void Op();
+	void deleteUnit();
 
 	//Input값 처리
 	void initInput(int size);

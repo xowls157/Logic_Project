@@ -240,6 +240,17 @@ BEGIN
     BEGIN
         MENUITEM "라벨 붙이기",                      ID_32784
         MENUITEM "회전 시키기",                      ID_ROTATE
+        MENUITEM "복사",                          ID_GATECOPY
+        MENUITEM "잘라내기",                        ID_GATECUT
+        MENUITEM "삭제",                          ID_Delete
+    END
+END
+
+IDR_MENU2 MENU
+BEGIN
+    POPUP "메뉴"
+    BEGIN
+        MENUITEM "붙여넣기",                        ID_PASTE
     END
 END
 

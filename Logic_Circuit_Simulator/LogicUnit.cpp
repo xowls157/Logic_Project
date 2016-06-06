@@ -23,10 +23,30 @@ LogicUnit::~LogicUnit()
 }
 
 void LogicUnit::Op() {
-
-
+	int i = 0;
 }
+void LogicUnit::deleteUnit() {
 
+	for (int i = 0; i < this->getCurrentInput(); i++) {
+		if( (LineUnit *)inputList.GetAt(i) != NULL )
+			for (int j = 0; j < ((LineUnit *)inputList.GetAt(i))->getCurrentOutput(); j++) {
+				if (((LineUnit *)inputList.GetAt(i))->outputList.GetAt(j) == this) {
+					disconnect_Unit((LineUnit *)inputList.GetAt(i), j, this, i);
+					break;
+				}
+			}
+	}
+
+	for (int i = 0; i < this->getCurrentOutput(); i++) {
+		if ( outputList[i] != NULL)
+			for (int j = 0; j < ((LineUnit *)outputList.GetAt(i))->getCurrentInput(); j++) {
+				if (((LineUnit *)outputList.GetAt(i))->inputList.GetAt(j) == this) {
+					disconnect_Unit(this, i, (LineUnit *)outputList.GetAt(i), j);
+					break;
+				}
+			}
+	}
+}
 
 //좌표를 입력 받음
 void LogicUnit::setPoint(CPoint setPt) {

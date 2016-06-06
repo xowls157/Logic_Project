@@ -25,8 +25,10 @@ public:
 public:
 	CPtrList DrawList;	//생성된 게이트들을 저장할 리스트
 	CPtrList LineList;	//생성된 라인들을 저장할 리스트
-	
+	LogicUnit* Temp_stack;
+
 	unitStack *stack;	//출력들을 update할 때 저장할 스택
+
 	int stack_count;	//위 스택의 카운트
 	
 	POSITION current;	//현재 선택된 게이트의 position
@@ -103,6 +105,10 @@ public:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnFileNew();
 	afx_msg void OnRotate();
+	afx_msg void OnGatecopy();
+	afx_msg void OnGatecut();
+	afx_msg void OnPaste();
+	afx_msg void OnDelete();
 };
 
 #ifndef _DEBUG  // Logic_Circuit_SimulatorView.cpp의 디버그 버전
