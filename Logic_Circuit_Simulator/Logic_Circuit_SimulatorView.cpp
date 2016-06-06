@@ -203,572 +203,6 @@ void CLogic_Circuit_SimulatorView::CreatePoint(CDC* pDC) {
 	}
 }
 
-//리스트에 담긴 객체를 전달받아 타입에따라 그려주기
-void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit) {
-	CRect rect;
-	CBitmap bit;
-	BITMAP bminfo;
-	CDC memDC;  //메모리 dc(장치와 연결되어 있지 않은 dc)
-	CPoint point(pt);
-	CPoint temp_pt,*prev_pt;
-	CPoint temp_image = unit->ImageSize;
-	int dir_int = (int)unit->getDirction();
-
-
-	for (int i = 0; i < (int)unit->getDirction(); i++) {
-		int temp_size = unit->ImageSize.y;
-		unit->ImageSize.y = unit->ImageSize.x;
-		unit->ImageSize.x = temp_size;
-	}
-
-
-	memDC.CreateCompatibleDC(pDC);
-
-	if (unit->isType(InputSwitch_type)) {
-
-		if (unit->getOutput(0) == true)
-			bit.LoadBitmapW(IDB_OffSwitch);
-		else
-			bit.LoadBitmapW(IDB_OnSwitch);
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-			);
-
-		//입출력점부터 이미지까지의 거리.
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, 20);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(20, 0);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, -20);
-			break;
-	}
-		}
-		pDC->MoveTo(unit->output_pt[0]);
-		pDC->LineTo(unit->output_pt[0].x + temp_pt.x, unit->output_pt[0].y + temp_pt.y);
-		
-	}
-	if (unit->isType(OutputSwitch_type))
-	{
-		if (unit->getCurrentInput() == 1)
-			unit->setInput(0, (unit->getInputList(0))->getOutput(0));
-
-
-		if (unit->getInput(0) == true)
-			bit.LoadBitmapW(IDB_OnOUTPUT);
-		else
-			bit.LoadBitmapW(IDB_OffOUTPUT);
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-			);
-
-		//입출력점부터 이미지까지의 거리.
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, 20);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(20, 0);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, -20);
-			break;
-		}
-		}
-		pDC->MoveTo(unit->input_pt[0]);
-		pDC->LineTo(unit->input_pt[0].x + temp_pt.x, unit->input_pt[0].y + temp_pt.y);
-	}
-	else if (unit->isType(Segment_type)) {
-
-		bit.LoadBitmapW(IDB_SEGMENT);
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-			);
-		Segment *seg = (Segment*)unit;
-		CClientDC dc(this);
-		seg->updateOutput();
-		temp_pt.SetPoint(point.x + 10, point.y + 10);
-
-		seg->drawNumber(seg->Number, temp_pt, pDC);
-		seg->acivateSegment(seg->Number, dc);
-
-		for (int i = 0; i < unit->getMaxInput(); i++) {
-			pDC->MoveTo(unit->input_pt[i]);
-
-			if (unit->input_pt[i].x - unit->getPoint().x >= 0 && unit->input_pt[i].y - unit->getPoint().y >= 0)
-				if(unit->input_pt[i].x - unit->getPoint().x > unit->ImageSize.x)
-					temp_pt.SetPoint(-20 , 0);
-				else
-					temp_pt.SetPoint(0,- 20);
-			else if (unit->input_pt[i].x - unit->getPoint().x < 0)
-				temp_pt.SetPoint(20, 0);
-			else if (unit->input_pt[i].y - unit->getPoint().y < 0)
-				temp_pt.SetPoint(0, 20);
-
-			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
-		}
-
-
-
-	}
-	else if (unit->isType(AndGate_type)) {
-		
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(-20, 0);
-			bit.LoadBitmapW(IDB_ANDGATE);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, 20);
-			bit.LoadBitmapW(IDB_ANDGATE2);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(20, 0);
-			bit.LoadBitmapW(IDB_ANDGATE3);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, -20);
-			bit.LoadBitmapW(IDB_ANDGATE4);
-			break;
-		}
-		}
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-			);
-		
-
-		for (int i = 0; i<unit->getMaxOutput(); i++) {
-			pDC->MoveTo(unit->output_pt[i]);
-			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
-		}
-
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(20, 0);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, -20);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, 20);
-			break;
-		}
-		}
-
-		for (int i = 0; i<unit->getMaxInput(); i++) {
-			pDC->MoveTo(unit->input_pt[i]);
-			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
-		}
-	}
-	else if (unit->isType(OrGate_type)) {
-
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(-20, 0);
-			bit.LoadBitmapW(IDB_ORGATE);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, 20);
-			bit.LoadBitmapW(IDB_ORGATE1);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(20, 0);
-			bit.LoadBitmapW(IDB_ORGATE2);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, -20);
-			bit.LoadBitmapW(IDB_ORGATE3);
-			break;
-		}
-		}
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-			);
-
-
-		for (int i = 0; i<unit->getMaxOutput(); i++) {
-			pDC->MoveTo(unit->output_pt[i]);
-			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
-		}
-
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(20, 0);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, -20);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, 20);
-			break;
-		}
-		}
-
-		for (int i = 0; i<unit->getMaxInput(); i++) {
-			pDC->MoveTo(unit->input_pt[i]);
-			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
-		}
-	}
-	else if (unit->isType(NotGate_type)) {
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(-20, 0);
-
-			bit.LoadBitmapW(IDB_NOTGATE);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, 20);
-
-			bit.LoadBitmapW(IDB_NOTGATE1);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(20, 0);
-
-			bit.LoadBitmapW(IDB_NOTGATE2);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, -20);
-
-			bit.LoadBitmapW(IDB_NOTGATE3);
-			break;
-		}
-		}
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		CPoint point2(point.x + 40, point.y + 40);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-			);
-
-		for (int i = 0; i<unit->getMaxOutput(); i++) {
-			pDC->MoveTo(unit->output_pt[i]);
-			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
-		}
-
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(20, 0);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, -20);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, 20);
-			break;
-		}
-		}
-
-		for (int i = 0; i<unit->getMaxInput(); i++) {
-			pDC->MoveTo(unit->input_pt[i]);
-			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
-		}
-
-	}
-	else if (unit->isType(NandGate_type)) {
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(-20, 0);
-			bit.LoadBitmapW(IDB_NANDGATE);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, 20);
-			bit.LoadBitmapW(IDB_NANDGATE1);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(20, 0);
-			bit.LoadBitmapW(IDB_NANDGATE2);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, -20);
-			bit.LoadBitmapW(IDB_NANDGATE3);
-			break;
-		}
-		}
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-		CPoint point2(point.x + 40, point.y + 40);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-			);
-
-		for (int i = 0; i<unit->getMaxOutput(); i++) {
-			pDC->MoveTo(unit->output_pt[i]);
-			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
-		}
-
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(20, 0);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, -20);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, 20);
-			break;
-		}
-		}
-
-		for (int i = 0; i<unit->getMaxInput(); i++) {
-			pDC->MoveTo(unit->input_pt[i]);
-			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
-		}
-
-	}
-	else if (unit->isType(NorGate_type)){
-		switch (unit->getDirction()) {
-		case EAST: {
-			bit.LoadBitmapW(IDB_NORGATE);
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case NORTH: {
-			bit.LoadBitmapW(IDB_NORGATE1);
-			temp_pt.SetPoint(0, 20);
-			break;
-		}case WEST: {
-			bit.LoadBitmapW(IDB_NORGATE2);
-			temp_pt.SetPoint(20, 0);
-			break;
-		}case SOUTH: {
-			bit.LoadBitmapW(IDB_NORGATE3);
-			temp_pt.SetPoint(0, -20);
-			break;
-		}
-		}
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		CPoint point2(point.x + 40, point.y + 40);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-			);
-
-		
-
-		for (int i = 0; i<unit->getMaxOutput(); i++) {
-			pDC->MoveTo(unit->output_pt[i]);
-			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
-		}
-
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(20, 0);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, -20);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, 20);
-			break;
-		}
-		}
-
-		for (int i = 0; i<unit->getMaxInput(); i++) {
-			pDC->MoveTo(unit->input_pt[i]);
-			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
-		}
-	}
-	else if (unit->isType(XorGate_type)){
-		
-		switch (unit->getDirction()) {
-		case EAST: {
-			bit.LoadBitmapW(IDB_XORGATE);
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, 20);
-
-			bit.LoadBitmapW(IDB_XORGATE1);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(20, 0);
-
-			bit.LoadBitmapW(IDB_XORGATE2);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, -20);
-
-			bit.LoadBitmapW(IDB_XORGATE3);
-			break;
-		}
-		}
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		CPoint point2(point.x + 40, point.y + 40);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-			);
-		
-		for (int i = 0; i<unit->getMaxOutput(); i++) {
-			pDC->MoveTo(unit->output_pt[i]);
-			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
-		}
-
-		switch (unit->getDirction()) {
-		case EAST: {
-			temp_pt.SetPoint(20, 0);
-			break;
-		}case NORTH: {
-			temp_pt.SetPoint(0, -20);
-			break;
-		}case WEST: {
-			temp_pt.SetPoint(-20, 0);
-			break;
-		}case SOUTH: {
-			temp_pt.SetPoint(0, 20);
-			break;
-		}
-		}
-
-		for (int i = 0; i<unit->getMaxInput(); i++) {
-			pDC->MoveTo(unit->input_pt[i]);
-			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
-		}
-	}
-	else if (unit->isType(DFFGate_type)) {
-		bit.LoadBitmapW(IDB_DFFGATE);
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		CPoint point2(point.x + 40, point.y + 40);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-		);
-
-
-		pDC->MoveTo(pt.x, pt.y + 20);
-		pDC->LineTo(pt.x - 20, pt.y + 20);
-		pDC->MoveTo(pt.x, pt.y + 60);
-		pDC->MoveTo(pt.x + 60, pt.y + 20);
-		pDC->LineTo(pt.x + 80, pt.y + 20);
-		pDC->MoveTo(pt.x + 60, pt.y + 60);
-		pDC->LineTo(pt.x + 80, pt.y + 60);
-		pDC->MoveTo(pt.x + 20, pt.y);
-		pDC->LineTo(pt.x + 20, pt.y - 20);
-
-	}
-	else if (unit->isType(JKFFGate_type)) {
-		bit.LoadBitmapW(IDB_JKFFGATE);
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		CPoint point2(point.x + 40, point.y + 40);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-		);
-
-
-		pDC->MoveTo(pt.x, pt.y + 20);
-		pDC->LineTo(pt.x - 20, pt.y + 20);
-		pDC->MoveTo(pt.x, pt.y + 60);
-		pDC->LineTo(pt.x - 20, pt.y + 60);
-		pDC->MoveTo(pt.x, pt.y + 60);
-		pDC->MoveTo(pt.x + 60, pt.y + 20);
-		pDC->LineTo(pt.x + 80, pt.y + 20);
-		pDC->MoveTo(pt.x + 60, pt.y + 60);
-		pDC->LineTo(pt.x + 80, pt.y + 60);
-		pDC->MoveTo(pt.x + 20, pt.y);
-		pDC->LineTo(pt.x + 20, pt.y - 20);
-	}
-	else if (unit->isType(TFFGate_type)) {
-		bit.LoadBitmapW(IDB_TFFGATE);
-		bit.GetBitmap(&bminfo);
-		memDC.SelectObject(&bit);
-
-		CPoint point2(point.x + 40, point.y + 40);
-
-		pDC->StretchBlt( //비트맵을 1:1로 출력
-			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
-			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
-			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
-		);
-
-
-		pDC->MoveTo(pt.x, pt.y + 20);
-		pDC->LineTo(pt.x - 20, pt.y + 20);
-		pDC->MoveTo(pt.x, pt.y + 60);
-		pDC->MoveTo(pt.x + 60, pt.y + 20);
-		pDC->LineTo(pt.x + 80, pt.y + 20);
-		pDC->MoveTo(pt.x + 60, pt.y + 60);
-		pDC->LineTo(pt.x + 80, pt.y + 60);
-		pDC->MoveTo(pt.x + 20, pt.y);
-		pDC->LineTo(pt.x + 20, pt.y - 20);
-	}
-	if ((unit->label.state)) {
-		unit->onLabelName(pDC);
-	}
-
-	unit->ImageSize = temp_image;
-}
 
 bool CLogic_Circuit_SimulatorView::CheckIn(CPoint point) {
 	POSITION pos;
@@ -985,7 +419,6 @@ void CLogic_Circuit_SimulatorView::Update(LogicUnit *unit) {
 }
 
 int CLogic_Circuit_SimulatorView::isInStack(LogicUnit *unit) {
-
 	for (int i = 0; (i < this->stack_count) && (this->stack[i].unit != NULL); i++) {
 		if (stack[i].unit == unit) {
 			return i;
@@ -993,7 +426,6 @@ int CLogic_Circuit_SimulatorView::isInStack(LogicUnit *unit) {
 		else return -1;
 	}
 }
-
 
 //현재 클릭지점(point)가 어떤 게이트의 몇번째 입력지점인지 리턴해주고 isInput에 입력이면 true, 출력지점이면 false 
 int CLogic_Circuit_SimulatorView::search_unit(CPoint point, bool &isInput) {
@@ -1032,7 +464,6 @@ int CLogic_Circuit_SimulatorView::search_unit(CPoint point, bool &isInput) {
 		}
 	}
 
-
 	current = NULL;
 	return -1;
 }
@@ -1042,10 +473,9 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 	CClientDC dc(this);
 	LogicUnit* temp;
 	LineUnit *selected_line;
+	branch * br = NULL;
 	int result;
 	bool isInput = false;
-
-
 
 	//빈공간에 클릭이 됨
 	if (CheckIn(point) == false && (selected_Input == NULL || selected_Output == NULL) && (selected ==NULL)) {
@@ -1058,17 +488,47 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 			CPoint pt;
 			pt = Nearby_point(point);
 
-			//신호를 쏘는곳
-			if (isInput != true && selected_Input == NULL) {
-				dc.Ellipse(pt.x - 5, pt.y - 5, pt.x + 5, pt.y + 5);
-				selected_Input = temp;
-				selected_Input_Index = result;
+
+
+			if (temp->isType(LineUnit_type) &&((pt == temp->output_pt[0]&& temp->getOutputList(0)!=NULL) || (pt == temp->input_pt[0] && temp->getInputList(0) != NULL)) ) {
+				//분기만들곳의 아웃풋 지점이면
+				br = new branch(pt, 2);
+				if (pt == temp->output_pt[0]) {
+					LineUnit *temp_line = (LineUnit *)temp->getOutputList(0);
+					LogicUnit::disconnect_Unit(temp, 0, temp->getOutputList(0), 0);
+					LogicUnit::connect_Unit(temp, 0, br, 0);
+					LogicUnit::connect_Unit(br, 0, temp_line, 0);
+
+					dc.Ellipse(pt.x - 5, pt.y - 5, pt.x + 5, pt.y + 5);
+					selected_Input = br;
+					selected_Input_Index = br->getCurrentInput();
+				}
+				else if(pt == temp->input_pt[0]){
+					LineUnit *temp_line = (LineUnit *)temp->getInputList(0);
+					LogicUnit::disconnect_Unit(temp->getInputList(0), 0, temp, 0);
+					LogicUnit::connect_Unit(temp_line, 0, br, 0);
+					LogicUnit::connect_Unit(br, 0, temp, 0);
+
+					dc.Ellipse(pt.x - 5, pt.y - 5, pt.x + 5, pt.y + 5);
+					selected_Input = br;
+					selected_Input_Index = br->getCurrentInput();
+				}
+
+				this->LineList.AddHead(br);
 			}
-			//신호를 받는곳
-			else if (isInput == true && selected_Output == NULL) {
-				dc.Ellipse(pt.x - 5, pt.y - 5, pt.x + 5, pt.y + 5);
-				selected_Output = temp;
-				selected_Output_Index = result;
+			else{
+				//신호를 쏘는곳
+				if (isInput != true && selected_Input == NULL) {
+					dc.Ellipse(pt.x - 5, pt.y - 5, pt.x + 5, pt.y + 5);
+					selected_Input = temp;
+					selected_Input_Index = result;
+				}
+				//신호를 받는곳
+				else if (isInput == true && selected_Output == NULL) {
+					dc.Ellipse(pt.x - 5, pt.y - 5, pt.x + 5, pt.y + 5);
+					selected_Output = temp;
+					selected_Output_Index = result;
+				}
 			}
 		}
 		//빈영역에 선택된경우
@@ -1081,62 +541,60 @@ void CLogic_Circuit_SimulatorView::OnLButtonDown(UINT nFlags, CPoint point){
 			}
 		}
 
-
 		//현재 클릭된 좌표점부터 선 그리기 신호 추가.
 		if (linning) {
 			LineUnit* line;
 
-			//선 양쪽점 모두 게이트로 선택이 되었을경우 연결을 시켜줌
-			if (selected_Input != NULL && selected_Output != NULL) {
-				dc.MoveTo((selected_Input->output_pt)[selected_Input_Index].x, (selected_Input->output_pt)[selected_Input_Index].y);
-				dc.LineTo((selected_Output->input_pt)[selected_Output_Index].x, (selected_Output->input_pt)[selected_Output_Index].y);
+				//선 양쪽점 모두 게이트로 선택이 되었을경우 연결을 시켜줌
+				if (selected_Input != NULL && selected_Output != NULL) {
+					dc.MoveTo((selected_Input->output_pt)[selected_Input_Index].x, (selected_Input->output_pt)[selected_Input_Index].y);
+					dc.LineTo((selected_Output->input_pt)[selected_Output_Index].x, (selected_Output->input_pt)[selected_Output_Index].y);
 
-				line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], (selected_Output->input_pt)[selected_Output_Index]);
+					line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], (selected_Output->input_pt)[selected_Output_Index]);
 
-				LogicUnit::connect_line(line, selected_Input, selected_Input_Index, selected_Output, selected_Output_Index);
-			}
-			//신호를 쏘는것만 연결됬을때
-			else if (selected_Input != NULL) {
-				dc.MoveTo((selected_Input->output_pt)[selected_Input_Index].x, (selected_Input->output_pt)[selected_Input_Index].y);
-				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
-
-				if ((selected_Input->output_pt)[selected_Input_Index] == Nearby_point(CPoint(prevx, prevy))) {
-					line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(line_start_pt));
+					LogicUnit::connect_line(line, selected_Input, selected_Input_Index, selected_Output, selected_Output_Index);
 				}
-				else {
-					line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(CPoint(prevx, prevy)));
+				//신호를 쏘는것만 연결됬을때
+				else if (selected_Input != NULL) {
+					dc.MoveTo((selected_Input->output_pt)[selected_Input_Index].x, (selected_Input->output_pt)[selected_Input_Index].y);
+					dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
+
+					if ((selected_Input->output_pt)[selected_Input_Index] == Nearby_point(CPoint(prevx, prevy))) {
+						line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(line_start_pt));
+					}
+					else {
+						line = new LineUnit((selected_Input->output_pt)[selected_Input_Index], Nearby_point(CPoint(prevx, prevy)));
+					}
+
+					LogicUnit::connect_Unit(selected_Input, selected_Input_Index, line, 0);
+				}
+				//신호를 받는것만 연결됬을때
+				else if (selected_Output != NULL) {
+					dc.MoveTo(line_start_pt);
+					dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
+
+					if ((selected_Output->input_pt)[selected_Output_Index] == Nearby_point(line_start_pt)) {
+						line = new LineUnit(Nearby_point(point), Nearby_point(line_start_pt));
+					}
+					else {
+						line = new LineUnit(line_start_pt, Nearby_point(point));
+					}
+
+					LogicUnit::connect_Unit(line, 0, selected_Output, selected_Output_Index);
+				}
+				else if (selected_Input == NULL && selected_Output == NULL) {
+					dc.MoveTo(line_start_pt);
+					dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
+
+					line = new LineUnit(line_start_pt, Nearby_point(CPoint(prevx, prevy)));
 				}
 
+				LineList.AddHead(line);
 
-				LogicUnit::connect_Unit(selected_Input, selected_Input_Index, line, 0);
-			}
-			//신호를 받는것만 연결됬을때
-			else if (selected_Output != NULL) {
-				dc.MoveTo(line_start_pt);
-				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
+				selected_Input = NULL;
+				selected_Output = NULL;
 
-				if ((selected_Output->input_pt)[selected_Output_Index] == Nearby_point(line_start_pt)) {
-					line = new LineUnit(Nearby_point(point), Nearby_point(line_start_pt));
-				}
-				else {
-					line = new LineUnit(line_start_pt, Nearby_point(point));
-				}
-
-				LogicUnit::connect_Unit(line, 0, selected_Output, selected_Output_Index);
-			}
-			else if (selected_Input == NULL && selected_Output == NULL) {
-				dc.MoveTo(line_start_pt);
-				dc.LineTo(Nearby_point(CPoint(prevx, prevy)));
-				
-				line = new LineUnit(line_start_pt, Nearby_point(CPoint(prevx, prevy)));
-			}
-
-			LineList.AddHead(line);
-
-			selected_Input = NULL;
-			selected_Output = NULL;
-
-			linning = false;
+				linning = false;
 		}
 		else {
 
@@ -1695,4 +1153,571 @@ void CLogic_Circuit_SimulatorView::OnPaste()
 			}
 	}
 	Temp_stack = NULL;
+}
+
+//리스트에 담긴 객체를 전달받아 타입에따라 그려주기
+void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit) {
+	CRect rect;
+	CBitmap bit;
+	BITMAP bminfo;
+	CDC memDC;  //메모리 dc(장치와 연결되어 있지 않은 dc)
+	CPoint point(pt);
+	CPoint temp_pt, *prev_pt;
+	CPoint temp_image = unit->ImageSize;
+	int dir_int = (int)unit->getDirction();
+
+
+	for (int i = 0; i < (int)unit->getDirction(); i++) {
+		int temp_size = unit->ImageSize.y;
+		unit->ImageSize.y = unit->ImageSize.x;
+		unit->ImageSize.x = temp_size;
+	}
+
+
+	memDC.CreateCompatibleDC(pDC);
+
+	if (unit->isType(InputSwitch_type)) {
+
+		if (unit->getOutput(0) == true)
+			bit.LoadBitmapW(IDB_OffSwitch);
+		else
+			bit.LoadBitmapW(IDB_OnSwitch);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+		//입출력점부터 이미지까지의 거리.
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}
+		}
+		pDC->MoveTo(unit->output_pt[0]);
+		pDC->LineTo(unit->output_pt[0].x + temp_pt.x, unit->output_pt[0].y + temp_pt.y);
+
+	}
+	if (unit->isType(OutputSwitch_type))
+	{
+		if (unit->getCurrentInput() == 1)
+			unit->setInput(0, (unit->getInputList(0))->getOutput(0));
+
+
+		if (unit->getInput(0) == true)
+			bit.LoadBitmapW(IDB_OnOUTPUT);
+		else
+			bit.LoadBitmapW(IDB_OffOUTPUT);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+		//입출력점부터 이미지까지의 거리.
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}
+		}
+		pDC->MoveTo(unit->input_pt[0]);
+		pDC->LineTo(unit->input_pt[0].x + temp_pt.x, unit->input_pt[0].y + temp_pt.y);
+	}
+	else if (unit->isType(Segment_type)) {
+
+		bit.LoadBitmapW(IDB_SEGMENT);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+		Segment *seg = (Segment*)unit;
+		CClientDC dc(this);
+		seg->updateOutput();
+		temp_pt.SetPoint(point.x + 10, point.y + 10);
+
+		seg->drawNumber(seg->Number, temp_pt, pDC);
+		seg->acivateSegment(seg->Number, dc);
+
+		for (int i = 0; i < unit->getMaxInput(); i++) {
+			pDC->MoveTo(unit->input_pt[i]);
+
+			if (unit->input_pt[i].x - unit->getPoint().x >= 0 && unit->input_pt[i].y - unit->getPoint().y >= 0)
+				if (unit->input_pt[i].x - unit->getPoint().x > unit->ImageSize.x)
+					temp_pt.SetPoint(-20, 0);
+				else
+					temp_pt.SetPoint(0, -20);
+			else if (unit->input_pt[i].x - unit->getPoint().x < 0)
+				temp_pt.SetPoint(20, 0);
+			else if (unit->input_pt[i].y - unit->getPoint().y < 0)
+				temp_pt.SetPoint(0, 20);
+
+			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
+		}
+
+
+
+	}
+	else if (unit->isType(AndGate_type)) {
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			bit.LoadBitmapW(IDB_ANDGATE);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			bit.LoadBitmapW(IDB_ANDGATE2);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			bit.LoadBitmapW(IDB_ANDGATE3);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			bit.LoadBitmapW(IDB_ANDGATE4);
+			break;
+		}
+		}
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+
+		for (int i = 0; i<unit->getMaxOutput(); i++) {
+			pDC->MoveTo(unit->output_pt[i]);
+			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
+		}
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+
+		for (int i = 0; i<unit->getMaxInput(); i++) {
+			pDC->MoveTo(unit->input_pt[i]);
+			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
+		}
+	}
+	else if (unit->isType(OrGate_type)) {
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			bit.LoadBitmapW(IDB_ORGATE);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			bit.LoadBitmapW(IDB_ORGATE1);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			bit.LoadBitmapW(IDB_ORGATE2);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			bit.LoadBitmapW(IDB_ORGATE3);
+			break;
+		}
+		}
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+
+		for (int i = 0; i<unit->getMaxOutput(); i++) {
+			pDC->MoveTo(unit->output_pt[i]);
+			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
+		}
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+
+		for (int i = 0; i<unit->getMaxInput(); i++) {
+			pDC->MoveTo(unit->input_pt[i]);
+			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
+		}
+	}
+	else if (unit->isType(NotGate_type)) {
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+
+			bit.LoadBitmapW(IDB_NOTGATE);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+
+			bit.LoadBitmapW(IDB_NOTGATE1);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+
+			bit.LoadBitmapW(IDB_NOTGATE2);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+
+			bit.LoadBitmapW(IDB_NOTGATE3);
+			break;
+		}
+		}
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+		for (int i = 0; i<unit->getMaxOutput(); i++) {
+			pDC->MoveTo(unit->output_pt[i]);
+			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
+		}
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+
+		for (int i = 0; i<unit->getMaxInput(); i++) {
+			pDC->MoveTo(unit->input_pt[i]);
+			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
+		}
+
+	}
+	else if (unit->isType(NandGate_type)) {
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(-20, 0);
+			bit.LoadBitmapW(IDB_NANDGATE);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+			bit.LoadBitmapW(IDB_NANDGATE1);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+			bit.LoadBitmapW(IDB_NANDGATE2);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+			bit.LoadBitmapW(IDB_NANDGATE3);
+			break;
+		}
+		}
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+		for (int i = 0; i<unit->getMaxOutput(); i++) {
+			pDC->MoveTo(unit->output_pt[i]);
+			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
+		}
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+
+		for (int i = 0; i<unit->getMaxInput(); i++) {
+			pDC->MoveTo(unit->input_pt[i]);
+			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
+		}
+
+	}
+	else if (unit->isType(NorGate_type)) {
+		switch (unit->getDirction()) {
+		case EAST: {
+			bit.LoadBitmapW(IDB_NORGATE);
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case NORTH: {
+			bit.LoadBitmapW(IDB_NORGATE1);
+			temp_pt.SetPoint(0, 20);
+			break;
+		}case WEST: {
+			bit.LoadBitmapW(IDB_NORGATE2);
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case SOUTH: {
+			bit.LoadBitmapW(IDB_NORGATE3);
+			temp_pt.SetPoint(0, -20);
+			break;
+		}
+		}
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+
+
+		for (int i = 0; i<unit->getMaxOutput(); i++) {
+			pDC->MoveTo(unit->output_pt[i]);
+			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
+		}
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+
+		for (int i = 0; i<unit->getMaxInput(); i++) {
+			pDC->MoveTo(unit->input_pt[i]);
+			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
+		}
+	}
+	else if (unit->isType(XorGate_type)) {
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			bit.LoadBitmapW(IDB_XORGATE);
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, 20);
+
+			bit.LoadBitmapW(IDB_XORGATE1);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(20, 0);
+
+			bit.LoadBitmapW(IDB_XORGATE2);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, -20);
+
+			bit.LoadBitmapW(IDB_XORGATE3);
+			break;
+		}
+		}
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+		for (int i = 0; i<unit->getMaxOutput(); i++) {
+			pDC->MoveTo(unit->output_pt[i]);
+			pDC->LineTo(unit->output_pt[i].x + temp_pt.x, unit->output_pt[i].y + temp_pt.y);
+		}
+
+		switch (unit->getDirction()) {
+		case EAST: {
+			temp_pt.SetPoint(20, 0);
+			break;
+		}case NORTH: {
+			temp_pt.SetPoint(0, -20);
+			break;
+		}case WEST: {
+			temp_pt.SetPoint(-20, 0);
+			break;
+		}case SOUTH: {
+			temp_pt.SetPoint(0, 20);
+			break;
+		}
+		}
+
+		for (int i = 0; i<unit->getMaxInput(); i++) {
+			pDC->MoveTo(unit->input_pt[i]);
+			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
+		}
+	}
+	else if (unit->isType(DFFGate_type)) {
+		bit.LoadBitmapW(IDB_DFFGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 20);
+		pDC->LineTo(pt.x + 80, pt.y + 20);
+		pDC->MoveTo(pt.x + 60, pt.y + 60);
+		pDC->LineTo(pt.x + 80, pt.y + 60);
+		pDC->MoveTo(pt.x + 20, pt.y);
+		pDC->LineTo(pt.x + 20, pt.y - 20);
+
+	}
+	else if (unit->isType(JKFFGate_type)) {
+		bit.LoadBitmapW(IDB_JKFFGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->LineTo(pt.x - 20, pt.y + 60);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 20);
+		pDC->LineTo(pt.x + 80, pt.y + 20);
+		pDC->MoveTo(pt.x + 60, pt.y + 60);
+		pDC->LineTo(pt.x + 80, pt.y + 60);
+		pDC->MoveTo(pt.x + 20, pt.y);
+		pDC->LineTo(pt.x + 20, pt.y - 20);
+	}
+	else if (unit->isType(TFFGate_type)) {
+		bit.LoadBitmapW(IDB_TFFGATE);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		CPoint point2(point.x + 40, point.y + 40);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, 60, 80,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+
+
+		pDC->MoveTo(pt.x, pt.y + 20);
+		pDC->LineTo(pt.x - 20, pt.y + 20);
+		pDC->MoveTo(pt.x, pt.y + 60);
+		pDC->MoveTo(pt.x + 60, pt.y + 20);
+		pDC->LineTo(pt.x + 80, pt.y + 20);
+		pDC->MoveTo(pt.x + 60, pt.y + 60);
+		pDC->LineTo(pt.x + 80, pt.y + 60);
+		pDC->MoveTo(pt.x + 20, pt.y);
+		pDC->LineTo(pt.x + 20, pt.y - 20);
+	}
+	if ((unit->label.state)) {
+		unit->onLabelName(pDC);
+	}
+
+	unit->ImageSize = temp_image;
 }

@@ -287,7 +287,11 @@ public:
 		this->output_pt = new CPoint[1];
 
 		this->input_pt[0].SetPoint(init_Pt.x, init_Pt.y);
-		this->output_pt[0].SetPoint(init_Pt.x, init_Pt.x);
+
+		for (int i = 0; i < this->getMaxOutput(); i++)
+			this->output_pt[i].SetPoint(init_Pt.x, init_Pt.y);
+
+
 	}
 };
 
