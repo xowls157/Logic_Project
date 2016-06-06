@@ -4,7 +4,7 @@
 
 enum Direction { EAST, NORTH, WEST, SOUTH };
 enum Unit_type { InputSwitch_type, OutputSwitch_type, Segment_type, LineUnit_type, 
-	Branch_type, AndGate_type, OrGate_type, 
+	Branch_type, Clock_type, AndGate_type, OrGate_type, 
 	NotGate_type, NandGate_type, NorGate_type, 
 	XorGate_type, DFFGate_type, JKFFGate_type, TFFGate_type};
 struct segment {
@@ -201,6 +201,8 @@ public:
 	}
 
 };
+
+
 
 class Segment : public LogicUnit {
 public:
@@ -583,7 +585,7 @@ class DFFGate : public LogicUnit
 {
 
 public:
-	void Op(int num);
+	void Op();
 	void setPut_point(CPoint pt) {
 		this->input_pt = new CPoint[2];
 		this->output_pt = new CPoint[2];
@@ -600,9 +602,9 @@ public:
 		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
 		this->label.UnitName.SetString(_T("D-FF"));
 		this->setUnitType(DFFGate_type);
-		this->setMaxInput(1);
+		this->setMaxInput(2);
 		this->setMaxOutput(2);
-		this->initInput(1);
+		this->initInput(2);
 		this->initOutput(2);
 
 		this->ImageSize.x = 60;
@@ -616,12 +618,14 @@ class JKFFGate : public LogicUnit
 {
 
 public:
-	void Op(int num); // num은 클록신호
-	void setPut_point(CPoint pt) {
-		this->input_pt = new CPoint[2];
+	void Op(); // num은 클록신호
+	void setPut_point(CPoint pt) 
+	{
+		this->input_pt = new CPoint[3];
 		this->output_pt = new CPoint[2];
 
 		this->input_pt[0].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[2].SetPoint(pt.x - 20, pt.y + 60);
 		this->input_pt[1].SetPoint(pt.x + 20, pt.y - 20);
 
 		this->output_pt[0].SetPoint(pt.x + 80, pt.y + 20);
@@ -633,9 +637,9 @@ public:
 		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
 		this->label.UnitName.SetString(_T("JK-FF"));
 		this->setUnitType(JKFFGate_type);
-		this->setMaxInput(2);
+		this->setMaxInput(3);
 		this->setMaxOutput(2);
-		this->initInput(2);
+		this->initInput(3);
 		this->initOutput(2);
 
 		this->ImageSize.x = 60;
@@ -650,7 +654,7 @@ class TFFGate : public LogicUnit
 {
 	    
 public:
-	void Op(int num); // num은 클록신호
+	void Op(); // num은 클록신호
 	void setPut_point(CPoint pt) {
 		this->input_pt = new CPoint[2];
 		this->output_pt = new CPoint[2];
@@ -667,13 +671,53 @@ public:
 		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
 		this->label.UnitName.SetString(_T("T-FF"));
 		this->setUnitType(TFFGate_type);
-		this->setMaxInput(1);
+		this->setMaxInput(2);
 		this->setMaxOutput(2);
-		this->initInput(1);
+		this->initInput(2);
 		this->initOutput(2);
 
 		this->ImageSize.x = 60;
 		this->ImageSize.y = 80;
+		setPut_point(init_Pt);
+	}
+};
+
+class Clock_pulse : public InputSwitch
+{
+public:
+	//호출시 기존값에서 변경함
+	void Op();
+	void setSwitch() {
+		if (this->getOutput(0) == false) {
+			this->setOutput(0, true);
+		}
+		else {
+			this->setOutput(0, false);
+		}
+	}
+	void setPut_point(CPoint pt) {
+		this->input_pt = NULL;
+		this->output_pt = new CPoint[1];
+
+		this->output_pt[0].SetPoint(pt.x + 60, pt.y + 20);
+
+		for (int i = 0; i < (int)this->getDirction(); i++)
+			this->OnRotateOutput();
+
+	}
+
+public:
+	Clock_pulse(CPoint init_Pt) :InputSwitch(init_Pt)
+	{
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("input"));
+		this->setUnitType(InputSwitch_type);
+		this->setMaxInput(0);
+		this->setMaxOutput(1);
+		this->initInput(0);
+		this->initOutput(1);
+		this->ImageSize.x = 40;
+		this->ImageSize.y = 40;
 		setPut_point(init_Pt);
 	}
 };
