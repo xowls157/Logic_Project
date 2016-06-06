@@ -536,6 +536,7 @@ void XorGate::Op()
 
 //DFF연산
 //getinput(0) : 입력신호
+//getinput(1) : 클럭신호
 void DFFGate::Op()
 {
 	if (this->getCurrentInput() == this->getMaxInput())
@@ -572,13 +573,13 @@ void DFFGate::Op()
 //getintput(1) : K입력
 //setoutput(0) : Q출력
 //setoutput(1) : Q'출력
-void JKFFGate::Op() //클럭신호 미포함
+void JKFFGate::Op() 
 {
 
 	if (this->getCurrentInput() == this->getMaxInput())
 	{
 	
-		if (this->getInput(2))
+		if (this->getInput(2)) // 클럭신호
 			{
 				if (!(this->getInput(0))) //(0,x)
 				{
@@ -646,7 +647,7 @@ void TFFGate::Op() //클럭신호 미포함
 
 	if (this->getCurrentInput() == this->getMaxInput())
 	{
-		if (this->getInput(1))
+		if (this->getInput(1)) // 클럭신호
 		{
 			if (this->getInput(0)) // 입력이 0
 			{
