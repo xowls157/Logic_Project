@@ -293,6 +293,44 @@ void CLogic_Circuit_SimulatorView::DrawUnit(CDC* pDC, CPoint pt, LogicUnit *unit
 		pDC->MoveTo(unit->input_pt[0]);
 		pDC->LineTo(unit->input_pt[0].x + temp_pt.x, unit->input_pt[0].y + temp_pt.y);
 	}
+	else if (unit->isType(Segment_type)) {
+
+		bit.LoadBitmapW(IDB_SEGMENT);
+		bit.GetBitmap(&bminfo);
+		memDC.SelectObject(&bit);
+
+		pDC->StretchBlt( //비트맵을 1:1로 출력
+			point.x, point.y, unit->ImageSize.x, unit->ImageSize.y,   //비트맵이 출력될 client 영역
+			&memDC, 0, 0, bminfo.bmWidth, bminfo.bmHeight,	//메모리 dc가 선택한 비트맵 좌측상단 x,y 부터 출력
+			SRCCOPY  //비트맵을 목적지에 기존 내용위에 복사
+			);
+		Segment *seg = (Segment*)unit;
+		CClientDC dc(this);
+		seg->updateOutput();
+		temp_pt.SetPoint(point.x + 10, point.y + 10);
+
+		seg->drawNumber(seg->Number, temp_pt, pDC);
+		seg->acivateSegment(seg->Number, dc);
+
+		for (int i = 0; i < unit->getMaxInput(); i++) {
+			pDC->MoveTo(unit->input_pt[i]);
+
+			if (unit->input_pt[i].x - unit->getPoint().x >= 0 && unit->input_pt[i].y - unit->getPoint().y >= 0)
+				if(unit->input_pt[i].x - unit->getPoint().x > unit->ImageSize.x)
+					temp_pt.SetPoint(-20 , 0);
+				else
+					temp_pt.SetPoint(0,- 20);
+			else if (unit->input_pt[i].x - unit->getPoint().x < 0)
+				temp_pt.SetPoint(20, 0);
+			else if (unit->input_pt[i].y - unit->getPoint().y < 0)
+				temp_pt.SetPoint(0, 20);
+
+			pDC->LineTo(unit->input_pt[i].x + temp_pt.x, unit->input_pt[i].y + temp_pt.y);
+		}
+
+
+
+	}
 	else if (unit->isType(AndGate_type)) {
 		
 		switch (unit->getDirction()) {

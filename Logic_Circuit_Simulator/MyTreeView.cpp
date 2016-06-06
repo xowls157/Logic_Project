@@ -82,6 +82,7 @@ void CMyTreeView::OnInitialUpdate()
 
 	tree.InsertItem(_T("입력"), 1, 1, hGate[2], TVI_LAST);
 	tree.InsertItem(_T("출력"), 1, 1, hGate[2], TVI_LAST);
+	tree.InsertItem(_T("Segment"), 1, 1, hGate[2], TVI_LAST);
 
 	}
 
@@ -171,6 +172,11 @@ void CMyTreeView::OnLButtonDblClk(UINT nFlags, CPoint point)
 	}
 	else if (item_name == _T("출력")) {
 		OutputSwitch  *unit = new OutputSwitch(CPoint(40, 40));
+		view->DrawList.AddHead(unit);
+		view->Invalidate();
+	}
+	else if (item_name == _T("Segment")) {
+		Segment *unit = new Segment(CPoint(40, 40));
 		view->DrawList.AddHead(unit);
 		view->Invalidate();
 	}

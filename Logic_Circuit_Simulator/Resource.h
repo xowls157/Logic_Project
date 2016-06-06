@@ -56,6 +56,8 @@
 #define IDB_NORGATE1                    342
 #define IDB_NORGATE2                    343
 #define IDB_NORGATE3                    344
+#define IDB_BITMAP7                     345
+#define IDB_SEGMENT                     345
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_32773                        32773
@@ -73,7 +75,7 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        330
+#define _APS_NEXT_RESOURCE_VALUE        346
 #define _APS_NEXT_COMMAND_VALUE         32785
 #define _APS_NEXT_CONTROL_VALUE         1000
 #define _APS_NEXT_SYMED_VALUE           310

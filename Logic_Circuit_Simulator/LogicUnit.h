@@ -3,11 +3,20 @@
 #include "unitLabel.h"
 
 enum Direction { EAST, NORTH, WEST, SOUTH };
-enum Unit_type { InputSwitch_type, OutputSwitch_type, LineUnit_type, 
+enum Unit_type { InputSwitch_type, OutputSwitch_type, Segment_type, LineUnit_type, 
 	Branch_type, AndGate_type, OrGate_type, 
 	NotGate_type, NandGate_type, NorGate_type, 
 	XorGate_type, DFFGate_type, JKFFGate_type, TFFGate_type};
-
+struct segment {
+	POINT* a;
+	POINT* b;
+	POINT* c;
+	POINT* d;
+	POINT* e;
+	POINT* f;
+	POINT* g;
+};
+typedef struct segment seg;
 
 class LogicUnit
 {
@@ -190,6 +199,54 @@ public:
 		setPut_point(init_Pt);
 	}
 
+};
+
+class Segment : public LogicUnit {
+public:
+	struct segment Number;
+	void acivateSegment(seg s,CClientDC &dc);
+	void drawNumber(seg s, CPoint startPoint, CDC* dc);
+	POINT* drawSegment1(CPoint startPoint, CDC* dc);
+	POINT* drawSegment2(CPoint startPoint, CDC* dc);
+	POINT MyMoveTo(CPoint &p, int x, int y) {
+		POINT point;
+
+		point.x = p.x += x;
+		point.y = p.y += y;
+
+		return point;
+	}
+	void updateOutput() {
+		for (int i = 0; i < this->getMaxInput(); i++) {
+			if (this->getInputList(i) != NULL)
+				this->setInput(i, (this->getInputList(i))->getOutput(0));
+		}
+	}
+	void setPut_point(CPoint pt) {
+		this->input_pt = new CPoint[7];
+		this->output_pt = NULL;
+
+		this->input_pt[0].SetPoint(pt.x + 20, pt.y - 20);
+		this->input_pt[1].SetPoint(pt.x + 80, pt.y + 20);
+		this->input_pt[2].SetPoint(pt.x + 80, pt.y + 60);
+		this->input_pt[3].SetPoint(pt.x + 20, pt.y + 100);
+		this->input_pt[4].SetPoint(pt.x - 20, pt.y + 60);
+		this->input_pt[5].SetPoint(pt.x - 20, pt.y + 20);
+		this->input_pt[6].SetPoint(pt.x - 20, pt.y + 40);
+	}
+public:
+	Segment(CPoint init_Pt) :LogicUnit(init_Pt) {
+		this->label.pt.SetPoint(init_Pt.x, init_Pt.y - 40);
+		this->label.UnitName.SetString(_T("Segment"));
+		this->setUnitType(Segment_type);
+		this->setMaxInput(7);
+		this->setMaxOutput(0);
+		this->initInput(7);
+		this->initOutput(0);
+		this->ImageSize.x = 60;
+		this->ImageSize.y = 80;
+		setPut_point(init_Pt);
+	}
 };
 
 //유닛들을 연결하는 라인

@@ -145,6 +145,8 @@ IDB_NORGATE2            BITMAP                  "res\\norgate2.bmp"
 
 IDB_NORGATE3            BITMAP                  "res\\norgate3.bmp"
 
+IDB_SEGMENT             BITMAP                  "res\\bmp00014.bmp"
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

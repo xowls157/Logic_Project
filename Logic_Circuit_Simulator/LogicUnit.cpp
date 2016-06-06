@@ -668,3 +668,115 @@ void TFFGate::Op(int num) //클럭신호 미포함
 	}
 
 }
+
+
+//==================segment 그리기==================================================================
+
+void Segment::acivateSegment(seg Number, CClientDC &dc) {
+	CBrush *old;
+	CBrush white(RGB(255, 255, 255));
+	CBrush red(RGB(255, 0, 0));
+
+	old = dc.SelectObject(&white);
+
+	dc.Polygon(Number.a, 6);
+	dc.Polygon(Number.b, 6);
+	dc.Polygon(Number.c, 6);
+	dc.Polygon(Number.d, 6);
+	dc.Polygon(Number.e, 6);
+	dc.Polygon(Number.f, 6);
+	dc.Polygon(Number.g, 6);
+
+	dc.SelectObject(&red);
+
+	if(this->getInput(0))
+		dc.Polygon(Number.a, 6);
+	if (this->getInput(1))
+		dc.Polygon(Number.b, 6);
+	if (this->getInput(2))
+		dc.Polygon(Number.c, 6);
+	if (this->getInput(3))
+		dc.Polygon(Number.d, 6);
+	if (this->getInput(4))
+		dc.Polygon(Number.e, 6);
+	if (this->getInput(5))
+		dc.Polygon(Number.f, 6);
+	if (this->getInput(6))
+		dc.Polygon(Number.g, 6);
+	dc.SelectObject(old);
+}
+void Segment::drawNumber(seg s, CPoint startPoint, CDC* dc){
+	CPoint oldpoint = startPoint;
+	POINT* temp; 
+
+	this->Number.a = drawSegment1(startPoint, dc);
+
+	startPoint.x += 0;
+	startPoint.y += 5;
+	this->Number.f = drawSegment2(startPoint, dc);
+
+	startPoint.x += 40;
+	startPoint.y += 0;
+	this->Number.b = drawSegment2(startPoint, dc);
+
+	startPoint.x -= 40;
+	startPoint.y += 25;
+	this->Number.g = drawSegment1(startPoint, dc);
+
+
+	startPoint.x += 0;
+	startPoint.y += 5;
+	this->Number.e = drawSegment2(startPoint, dc);
+
+	startPoint.x += 40;
+	startPoint.y += 0;
+	this->Number.c = drawSegment2(startPoint, dc);
+
+
+	startPoint.x -= 40;
+	startPoint.y += 25;
+	this->Number.d = drawSegment1(startPoint, dc);
+}
+POINT* Segment::drawSegment1(CPoint startPoint, CDC* dc){
+	POINT oldPoint = startPoint;
+
+	dc->MoveTo(startPoint);
+
+	POINT* poly;
+
+	poly = new POINT[6];
+
+	poly[0] = MyMoveTo(startPoint, 5, -5);
+	poly[1] = MyMoveTo(startPoint, 30, 0);
+	poly[2] = MyMoveTo(startPoint, 5, 5);
+	poly[3] = MyMoveTo(startPoint, -5, 5);
+	poly[4] = MyMoveTo(startPoint, -30, 0);
+	poly[5] = MyMoveTo(startPoint, -5, -5);
+
+	dc->MoveTo(oldPoint);
+	dc->Polygon(poly, 6);
+
+	return poly;
+}
+POINT* Segment::drawSegment2(CPoint startPoint, CDC* dc) {
+	POINT oldPoint = startPoint;
+
+	dc->MoveTo(startPoint);
+
+	POINT* poly;
+
+	poly = new POINT[6];
+
+	poly[0] = MyMoveTo(startPoint, 5, 5);
+	poly[1] = MyMoveTo(startPoint, 0, 10);
+	poly[2] = MyMoveTo(startPoint, -5, 5);
+	poly[3] = MyMoveTo(startPoint, -5, -5);
+	poly[4] = MyMoveTo(startPoint, 0, -10);
+	poly[5] = MyMoveTo(startPoint, 5, -5);
+
+	dc->MoveTo(oldPoint);
+
+	dc->Polygon(poly, 6);
+
+	return poly;
+}
