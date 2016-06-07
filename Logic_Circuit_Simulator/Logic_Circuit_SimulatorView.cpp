@@ -1610,7 +1610,7 @@ void CLogic_Circuit_SimulatorView::CreateDFF()
 void CLogic_Circuit_SimulatorView::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
-	/*
+	
 	Clock_pulse *clr;
 	InputSwitch *inp;
 	POSITION pos;
@@ -1621,7 +1621,7 @@ void CLogic_Circuit_SimulatorView::OnTimer(UINT_PTR nIDEvent)
 		clr->setSwitch();
 		newUpdate(clr);
 	}
-	*/
+	
 	CView::OnTimer(nIDEvent);
 }
 

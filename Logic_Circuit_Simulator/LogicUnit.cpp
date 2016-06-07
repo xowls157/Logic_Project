@@ -121,17 +121,6 @@ bool LogicUnit::getOutput(int index) {
 }
 //==============================================================
 
-//clock번호의 입력값을 바꿔줌(미완)				
-void LogicUnit::setclock(int index, bool state) {
-	this->clock[index] = state;
-}
-//==============================================================
-
-//clock값을 얻음(미완)
-bool LogicUnit::getclock(int index) {
-	return this->clock[index];
-}
-//==============================================================
 
 //Input으로 들어오는 Unit의 포인터를 배열에 저장
 void LogicUnit::setInputList(LogicUnit *unit) {
