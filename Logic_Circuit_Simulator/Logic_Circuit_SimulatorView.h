@@ -26,6 +26,7 @@ public:
 	CPtrList DrawList;	//생성된 게이트들을 저장할 리스트
 	CPtrList LineList;	//생성된 라인들을 저장할 리스트
 	LogicUnit* Temp_stack;
+	CPtrList DoList;
 
 	unitStack *stack;	//출력들을 update할 때 저장할 스택
 
@@ -109,6 +110,8 @@ public:
 	afx_msg void OnGatecut();
 	afx_msg void OnPaste();
 	afx_msg void OnDelete();
+	afx_msg void OnUndo();
+	afx_msg void OnRedo();
 };
 
 #ifndef _DEBUG  // Logic_Circuit_SimulatorView.cpp의 디버그 버전

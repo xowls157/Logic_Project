@@ -55,6 +55,8 @@ BEGIN_MESSAGE_MAP(CLogic_Circuit_SimulatorView, CView)
 	ON_COMMAND(ID_GATECUT, &CLogic_Circuit_SimulatorView::OnGatecut)
 	ON_COMMAND(ID_PASTE, &CLogic_Circuit_SimulatorView::OnPaste)
 	ON_COMMAND(ID_Delete, &CLogic_Circuit_SimulatorView::OnDelete)
+	ON_COMMAND(ID_32795, &CLogic_Circuit_SimulatorView::OnUndo)
+	ON_COMMAND(ID_32796, &CLogic_Circuit_SimulatorView::OnRedo)
 END_MESSAGE_MAP()
 
 // CLogic_Circuit_SimulatorView 생성/소멸
@@ -1897,4 +1899,28 @@ void CLogic_Circuit_SimulatorView::OnPaste()
 			}
 	}
 	Temp_stack = NULL;
+}
+
+
+void CLogic_Circuit_SimulatorView::OnUndo()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	if (DrawList.GetSize() != 0) {
+		if (DoList.GetSize() == 0 || DoList.GetHead() != DrawList.GetHead()) {
+			DoList.AddHead(DrawList.GetHead());
+			DrawList.RemoveHead();
+			Invalidate();
+		}
+	}
+}
+
+
+void CLogic_Circuit_SimulatorView::OnRedo()
+{
+	// TODO: 여기에 명령 처리기 코드를 추가합니다.
+	if (DoList.GetSize() != 0) {
+		DrawList.AddHead(DoList.GetHead());
+		DoList.RemoveHead();
+		Invalidate();
+	}
 }
