@@ -62,10 +62,6 @@ public:
 	void setOutput(int index, bool state);
 	bool getOutput(int index);
 
-	//clock값 처리											//미완성
-	void setclock(int index, bool state);
-	bool getclock(int index);
-
 	//Input 개체들 연결
 	void setInputList(LogicUnit *unit);
 	void setInputList(LogicUnit *unit, int index);
