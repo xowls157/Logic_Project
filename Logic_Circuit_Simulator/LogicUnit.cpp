@@ -592,7 +592,7 @@ void JKFFGate::Op()
 					}
 				}
 				else if ((this->getInput(0))) //(1,x)
-				{
+				{ 
 					if (!(this->getInput(1))) //(1,0)
 					{
 						this->setOutput(0, true);
@@ -617,8 +617,7 @@ void JKFFGate::Op()
 		}
 	}
 		else
-		{
-			setOutput(0, false);
+		{			setOutput(0, false);
 			setOutput(1, false);
 		}
 
