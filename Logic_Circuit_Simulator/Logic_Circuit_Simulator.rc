@@ -231,6 +231,11 @@ BEGIN
     BEGIN
         MENUITEM "Logic_Circuit_Simulator 정보(&A)...", ID_APP_ABOUT
     END
+    POPUP "작업"
+    BEGIN
+        MENUITEM "UNDO",                        ID_32795
+        MENUITEM "REDO",                        ID_32796
+    END
 END
 
 IDR_THEME_MENU MENU
